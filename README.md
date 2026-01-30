@@ -1,73 +1,50 @@
-# React + TypeScript + Vite
+# FinControl - Controle Financeiro Pessoal 💰
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+FinControl é uma aplicação moderna e minimalista para gestão de finanças pessoais, focada em simplicidade e visualização de dados. 
 
-Currently, two official plugins are available:
+## 🚀 Funcionalidades
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- **Dashboard**: Visão geral de saldo, receitas e despesas com gráficos dinâmicos.
+- **Transações**: CRUD completo (Criação, Leitura, Edição e Exclusão) de movimentações financeiras.
+- **Metas**: Definição e acompanhamento de objetivos de economia com barra de progresso.
+- **Categorias**: Sistema de categorias inteligentes separadas por tipo (Entrada/Saída).
+- **Autenticação**: Sistema seguro de login e cadastro via Supabase.
 
-## React Compiler
+## 🛠️ Tecnologias Utilizadas
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- **Frontend**: [React](https://reactjs.org/) + [Vite](https://vitejs.dev/) + [TypeScript](https://www.typescriptlang.org/)
+- **Estilização**: [Tailwind CSS](https://tailwindcss.com/) + [Shadcn/UI](https://ui.shadcn.com/)
+- **Gráficos**: [Recharts](https://recharts.org/)
+- **Backend/Auth**: [Supabase](https://supabase.com/)
 
-## Expanding the ESLint configuration
+## ⚙️ Configuração Local
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+1.  **Clone o repositório**:
+    ```bash
+    git clone https://github.com/pedrostartse/fincontrol.git
+    cd fincontrol
+    ```
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+2.  **Instale as dependências**:
+    ```bash
+    npm install
+    ```
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+3.  **Variáveis de Ambiente**:
+    Crie um arquivo `.env` na raiz do projeto e adicione suas credenciais do Supabase:
+    ```env
+    VITE_SUPABASE_URL=sua_url_do_supabase
+    VITE_SUPABASE_ANON_KEY=sua_chave_anon_do_supabase
+    ```
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+4.  **Inicie o servidor de desenvolvimento**:
+    ```bash
+    npm run dev
+    ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## 🌐 Deploy (Vercel)
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+Para realizar o deploy na Vercel, conecte seu repositório do GitHub e lembre-se de configurar as mesmas Variáveis de Ambiente (`VITE_SUPABASE_URL` e `VITE_SUPABASE_ANON_KEY`) no painel de configurações do projeto na Vercel.
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+---
+Desenvolvido com ❤️ por Pedro.

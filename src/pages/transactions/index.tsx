@@ -141,23 +141,30 @@ export function TransactionsPage() {
                             </div>
 
                             <div className="flex flex-wrap items-center gap-4 flex-1 w-full">
+                                {/* Reset All Button */}
+                                <Button
+                                    variant={(typeFilter === 'all' && methodFilter === 'all') ? "secondary" : "ghost"}
+                                    size="sm"
+                                    className="h-9 px-4 font-bold rounded-lg border border-dashed border-primary/20"
+                                    onClick={() => {
+                                        setTypeFilter('all')
+                                        setMethodFilter('all')
+                                    }}
+                                >
+                                    Ver Tudo
+                                </Button>
+
+                                <div className="h-8 w-px bg-border/50 hidden sm:block" />
+
                                 {/* Tipo Filter */}
-                                <div className="space-y-1.5 flex-1 min-w-[200px] sm:flex-none">
+                                <div className="space-y-1.5 flex-1 min-w-[140px] sm:flex-none">
                                     <span className="text-[10px] uppercase font-bold text-muted-foreground/60 ml-1">Tipo</span>
                                     <div className="flex bg-muted/60 rounded-lg p-1">
-                                        <Button
-                                            variant={typeFilter === 'all' ? "secondary" : "ghost"}
-                                            size="sm"
-                                            className="flex-1 h-8 px-3"
-                                            onClick={() => setTypeFilter('all')}
-                                        >
-                                            Todas
-                                        </Button>
                                         <Button
                                             variant={typeFilter === 'income' ? "secondary" : "ghost"}
                                             size="sm"
                                             className="flex-1 h-8 px-3"
-                                            onClick={() => setTypeFilter('income')}
+                                            onClick={() => setTypeFilter(typeFilter === 'income' ? 'all' : 'income')}
                                         >
                                             Receitas
                                         </Button>
@@ -165,7 +172,7 @@ export function TransactionsPage() {
                                             variant={typeFilter === 'expense' ? "secondary" : "ghost"}
                                             size="sm"
                                             className="flex-1 h-8 px-3"
-                                            onClick={() => setTypeFilter('expense')}
+                                            onClick={() => setTypeFilter(typeFilter === 'expense' ? 'all' : 'expense')}
                                         >
                                             Despesas
                                         </Button>
@@ -173,22 +180,14 @@ export function TransactionsPage() {
                                 </div>
 
                                 {/* Pagamento Filter */}
-                                <div className="space-y-1.5 flex-1 min-w-[200px] sm:flex-none">
+                                <div className="space-y-1.5 flex-1 min-w-[140px] sm:flex-none">
                                     <span className="text-[10px] uppercase font-bold text-muted-foreground/60 ml-1">Pagamento</span>
                                     <div className="flex bg-muted/60 rounded-lg p-1">
-                                        <Button
-                                            variant={methodFilter === 'all' ? "secondary" : "ghost"}
-                                            size="sm"
-                                            className="flex-1 h-8 px-3"
-                                            onClick={() => setMethodFilter('all')}
-                                        >
-                                            Todas
-                                        </Button>
                                         <Button
                                             variant={methodFilter === 'debit' ? "secondary" : "ghost"}
                                             size="sm"
                                             className="flex-1 h-8 px-3"
-                                            onClick={() => setMethodFilter('debit')}
+                                            onClick={() => setMethodFilter(methodFilter === 'debit' ? 'all' : 'debit')}
                                         >
                                             Débito
                                         </Button>
@@ -196,28 +195,12 @@ export function TransactionsPage() {
                                             variant={methodFilter === 'credit' ? "secondary" : "ghost"}
                                             size="sm"
                                             className="flex-1 h-8 px-3"
-                                            onClick={() => setMethodFilter('credit')}
+                                            onClick={() => setMethodFilter(methodFilter === 'credit' ? 'all' : 'credit')}
                                         >
                                             Crédito
                                         </Button>
                                     </div>
                                 </div>
-
-                                {(typeFilter !== 'all' || methodFilter !== 'all') && (
-                                    <div className="self-end pb-1">
-                                        <Button
-                                            variant="ghost"
-                                            size="sm"
-                                            className="text-xs h-8 text-muted-foreground hover:text-primary"
-                                            onClick={() => {
-                                                setTypeFilter('all')
-                                                setMethodFilter('all')
-                                            }}
-                                        >
-                                            Limpar filtros
-                                        </Button>
-                                    </div>
-                                )}
                             </div>
 
                             <div className="w-full lg:w-auto lg:ml-auto">

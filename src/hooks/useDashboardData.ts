@@ -1,11 +1,14 @@
 import { useEffect, useState } from 'react'
 import { supabase } from '@/lib/supabase'
 import type { Database } from '@/types/supabase'
+import { startOfMonth, endOfMonth, subMonths, isWithinInterval } from 'date-fns'
 
 type Transaction = Database['public']['Tables']['transactions']['Row']
 type Category = Database['public']['Tables']['categories']['Row']
 
-export function useDashboardData() {
+export type Period = 'current_month' | 'last_month' | 'last_3_months' | 'all'
+
+export function useDashboardData(period: Period = 'current_month') {
     const [data, setData] = useState<{
         balance: number
         income: number
@@ -25,15 +28,9 @@ export function useDashboardData() {
         async function fetchData() {
             try {
                 setLoading(true)
-
-                // Em um app real, filtraríamos pelo mês atual/usuário logado
-                // Para demo, pegamos tudo se estiver logado, ou retornamos mock se não estiver
-
                 const { data: { session } } = await supabase.auth.getSession()
 
                 if (!session) {
-                    console.log("No session, using mock data")
-                    // Return mock data for UI testing without auth
                     setData({
                         balance: 2450.00,
                         income: 4550.00,
@@ -50,29 +47,52 @@ export function useDashboardData() {
                     return
                 }
 
-                const [transactionsResponse] = await Promise.all([
-                    supabase
-                        .from('transactions')
-                        .select('*, categories(*)')
-                        .order('date', { ascending: false }),
-                    supabase.from('categories').select('*')
-                ])
+                // Fetch all transactions for balance, but filter for period stats
+                const { data: allTransactions, error } = await supabase
+                    .from('transactions')
+                    .select('*, categories(*)')
+                    .order('date', { ascending: false })
 
-                if (transactionsResponse.error) throw transactionsResponse.error
+                if (error) throw error
+                const transactions = allTransactions || []
 
-                const transactions = transactionsResponse.data || []
+                // Calculate Lifetime Balance
+                const lifetimeIncome = transactions.filter(t => t.type === 'income').reduce((acc, t) => acc + Number(t.amount), 0)
+                const lifetimeExpense = transactions.filter(t => t.type === 'expense').reduce((acc, t) => acc + Number(t.amount), 0)
 
-                const income = transactions
+                // Define Period Range
+                let startDate = new Date(0) // Default to all time
+                let endDate = new Date()
+
+                if (period === 'current_month') {
+                    startDate = startOfMonth(new Date())
+                    endDate = endOfMonth(new Date())
+                } else if (period === 'last_month') {
+                    const lastMonth = subMonths(new Date(), 1)
+                    startDate = startOfMonth(lastMonth)
+                    endDate = endOfMonth(lastMonth)
+                } else if (period === 'last_3_months') {
+                    startDate = startOfMonth(subMonths(new Date(), 2))
+                    endDate = endOfMonth(new Date())
+                }
+
+                const periodTransactions = period === 'all'
+                    ? transactions
+                    : transactions.filter(t => {
+                        const tDate = new Date(t.date + 'T12:00:00')
+                        return isWithinInterval(tDate, { start: startDate, end: endDate })
+                    })
+
+                const income = periodTransactions
                     .filter(t => t.type === 'income')
                     .reduce((acc, t) => acc + Number(t.amount), 0)
 
-                const expense = transactions
+                const expense = periodTransactions
                     .filter(t => t.type === 'expense')
                     .reduce((acc, t) => acc + Number(t.amount), 0)
 
-                // Calculate category stats for pie chart
                 const statsMap = new Map<string, number>()
-                transactions
+                periodTransactions
                     .filter(t => t.type === 'expense')
                     .forEach(t => {
                         const catName = t.categories?.name || 'Sem Categoria'
@@ -80,17 +100,17 @@ export function useDashboardData() {
                         statsMap.set(catName, current + Number(t.amount))
                     })
 
-                const categoryStats = Array.from(statsMap.entries()).map(([name, value], index) => ({
+                const categoryStats = Array.from(statsMap.entries()).map(([name, value]) => ({
                     name,
                     value,
-                    color: generateColor(index)
+                    color: generateColor(name)
                 }))
 
                 setData({
-                    balance: income - expense,
+                    balance: lifetimeIncome - lifetimeExpense,
                     income,
                     expense,
-                    recentTransactions: transactions.slice(0, 5),
+                    recentTransactions: periodTransactions.slice(0, 5),
                     categoryStats
                 })
 
@@ -102,12 +122,18 @@ export function useDashboardData() {
         }
 
         fetchData()
-    }, [])
+    }, [period])
 
     return { data, loading }
 }
 
-function generateColor(index: number) {
-    const colors = ['#ef4444', '#3b82f6', '#10b981', '#f59e0b', '#8b5cf6', '#ec4899']
-    return colors[index % colors.length]
+function generateColor(name: string) {
+    // Generate a consistent color based on string hash
+    let hash = 0
+    for (let i = 0; i < name.length; i++) {
+        hash = name.charCodeAt(i) + ((hash << 5) - hash)
+    }
+    const colors = ['#ef4444', '#3b82f6', '#10b981', '#f59e0b', '#8b5cf6', '#ec4899', '#06b6d4', '#84cc16']
+    return colors[Math.abs(hash) % colors.length]
 }
+

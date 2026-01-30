@@ -1,5 +1,5 @@
 import { Link, useLocation } from "react-router-dom"
-import { LayoutDashboard, Wallet, Target, LogOut, PieChart } from "lucide-react"
+import { LayoutDashboard, Wallet, Target, LogOut, PieChart, CalendarDays } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 
@@ -7,6 +7,7 @@ const navItems = [
     { name: "Dashboard", href: "/", icon: LayoutDashboard },
     { name: "Transações", href: "/transactions", icon: Wallet },
     { name: "Metas", href: "/goals", icon: Target },
+    { name: "Assinaturas", href: "/subscriptions", icon: CalendarDays },
 ]
 
 export function Sidebar() {

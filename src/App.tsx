@@ -5,6 +5,7 @@ import { TransactionsPage } from "./pages/transactions"
 import { LoginPage } from "./pages/auth/login"
 import { AuthGuard } from "./components/auth/auth-guard"
 import { GoalsPage } from "./pages/goals"
+import { SubscriptionsPage } from "./pages/subscriptions"
 
 function App() {
   return (
@@ -19,6 +20,7 @@ function App() {
         <Route path="/" element={<Dashboard />} />
         <Route path="/transactions" element={<TransactionsPage />} />
         <Route path="/goals" element={<GoalsPage />} />
+        <Route path="/subscriptions" element={<SubscriptionsPage />} />
       </Route>
 
       <Route path="*" element={<Navigate to="/" replace />} />

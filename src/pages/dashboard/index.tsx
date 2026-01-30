@@ -1,12 +1,27 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip } from "recharts"
-import { ArrowUpCircle, ArrowDownCircle, DollarSign } from "lucide-react"
+import { ArrowUpCircle, ArrowDownCircle, DollarSign, CalendarDays } from "lucide-react"
 import { TransactionDialog } from "@/components/transactions/transaction-dialog"
 
 import { useDashboardData } from "@/hooks/useDashboardData"
+import { supabase } from "@/lib/supabase"
+
+import { useState, useEffect } from "react"
+import { PeriodFilter } from "@/components/ui/period-filter"
+import type { Period } from "@/components/ui/period-filter"
 
 export function Dashboard() {
-    const { data: dashboardData, loading } = useDashboardData()
+    const [period, setPeriod] = useState<Period>('current_month')
+    const { data: dashboardData, loading } = useDashboardData(period)
+    const [subTotal, setSubTotal] = useState(0)
+
+    useEffect(() => {
+        const fetchSubs = async () => {
+            const { data } = await supabase.from('subscriptions').select('amount').eq('active', true)
+            if (data) setSubTotal(data.reduce((acc: number, s: { amount: number }) => acc + Number(s.amount), 0))
+        }
+        fetchSubs()
+    }, [])
 
     if (loading) {
         return (
@@ -20,15 +35,19 @@ export function Dashboard() {
 
     return (
         <div className="space-y-6 animate-in fade-in duration-500">
-            <div className="flex items-center justify-between">
-                <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
-                <div className="flex items-center gap-2">
+            <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+                <div>
+                    <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
+                    <p className="text-sm text-muted-foreground">Bem-vindo ao seu controle financeiro.</p>
+                </div>
+                <div className="flex items-center gap-3">
+                    <PeriodFilter value={period} onChange={setPeriod} />
                     <TransactionDialog />
                 </div>
             </div>
 
             {/* Summary Cards */}
-            <div className="grid gap-4 md:grid-cols-3">
+            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
                 <Card>
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                         <CardTitle className="text-sm font-medium">Saldo Total</CardTitle>
@@ -38,7 +57,7 @@ export function Dashboard() {
                         <div className="text-2xl font-bold">
                             {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(balance)}
                         </div>
-                        <p className="text-xs text-muted-foreground">+0% em relação ao mês anterior</p>
+                        <p className="text-xs text-muted-foreground">Valor acumulado total</p>
                     </CardContent>
                 </Card>
                 <Card>
@@ -50,7 +69,7 @@ export function Dashboard() {
                         <div className="text-2xl font-bold text-emerald-500">
                             {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(income)}
                         </div>
-                        <p className="text-xs text-muted-foreground">do mês atual</p>
+                        <p className="text-xs text-muted-foreground">No período selecionado</p>
                     </CardContent>
                 </Card>
                 <Card>
@@ -62,7 +81,19 @@ export function Dashboard() {
                         <div className="text-2xl font-bold text-rose-500">
                             {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(expense)}
                         </div>
-                        <p className="text-xs text-muted-foreground">do mês atual</p>
+                        <p className="text-xs text-muted-foreground">No período selecionado</p>
+                    </CardContent>
+                </Card>
+                <Card>
+                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                        <CardTitle className="text-sm font-medium">Assinaturas</CardTitle>
+                        <CalendarDays className="h-4 w-4 text-primary" />
+                    </CardHeader>
+                    <CardContent>
+                        <div className="text-2xl font-bold text-primary">
+                            {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(subTotal)}
+                        </div>
+                        <p className="text-xs text-muted-foreground">Custo fixo mensal ativo</p>
                     </CardContent>
                 </Card>
             </div>

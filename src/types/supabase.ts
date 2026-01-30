@@ -102,6 +102,38 @@ export interface Database {
                     created_at?: string
                 }
             }
+            subscriptions: {
+                Row: {
+                    id: string
+                    user_id: string
+                    name: string
+                    amount: number
+                    billing_day: number
+                    category_id: string | null
+                    active: boolean
+                    created_at: string
+                }
+                Insert: {
+                    id?: string
+                    user_id?: string
+                    name: string
+                    amount: number
+                    billing_day: number
+                    category_id?: string | null
+                    active?: boolean
+                    created_at?: string
+                }
+                Update: {
+                    id?: string
+                    user_id?: string
+                    name?: string
+                    amount?: number
+                    billing_day?: number
+                    category_id?: string | null
+                    active?: boolean
+                    created_at?: string
+                }
+            }
         }
     }
 }

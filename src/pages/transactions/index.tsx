@@ -7,6 +7,9 @@ import { ptBR } from "date-fns/locale"
 import { Pencil, Trash2 } from "lucide-react"
 import { useTransactions } from "@/hooks/useTransactions"
 import { Button } from "@/components/ui/button"
+import { PeriodFilter } from "@/components/ui/period-filter"
+import type { Period } from "@/components/ui/period-filter"
+import { startOfMonth, endOfMonth, subMonths } from "date-fns"
 
 type Transaction = {
     id: string
@@ -21,15 +24,40 @@ type Transaction = {
 export function TransactionsPage() {
     const [transactions, setTransactions] = useState<Transaction[]>([])
     const [loading, setLoading] = useState(true)
+    const [period, setPeriod] = useState<Period>('current_month')
     const { deleteTransaction } = useTransactions()
 
     const fetchTransactions = async () => {
         try {
             setLoading(true)
-            const { data, error } = await supabase
+
+            let query = supabase
                 .from('transactions')
                 .select('*, categories(*)')
                 .order('date', { ascending: false })
+
+            if (period !== 'all') {
+                let startDate = new Date(0)
+                let endDate = new Date()
+
+                if (period === 'current_month') {
+                    startDate = startOfMonth(new Date())
+                    endDate = endOfMonth(new Date())
+                } else if (period === 'last_month') {
+                    const lastMonth = subMonths(new Date(), 1)
+                    startDate = startOfMonth(lastMonth)
+                    endDate = endOfMonth(lastMonth)
+                } else if (period === 'last_3_months') {
+                    startDate = startOfMonth(subMonths(new Date(), 2))
+                    endDate = endOfMonth(new Date())
+                }
+
+                query = query
+                    .gte('date', startDate.toLocaleDateString('en-CA'))
+                    .lte('date', endDate.toLocaleDateString('en-CA'))
+            }
+
+            const { data, error } = await query
 
             if (error) throw error
             if (data) setTransactions(data)
@@ -42,7 +70,7 @@ export function TransactionsPage() {
 
     useEffect(() => {
         fetchTransactions()
-    }, [])
+    }, [period])
 
     const handleDelete = async (id: string) => {
         if (confirm("Deseja realmente excluir esta transação?")) {
@@ -55,9 +83,15 @@ export function TransactionsPage() {
 
     return (
         <div className="space-y-6 animate-in fade-in duration-500">
-            <div className="flex items-center justify-between">
-                <h1 className="text-3xl font-bold tracking-tight">Transações</h1>
-                <TransactionDialog onSuccess={fetchTransactions} />
+            <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+                <div>
+                    <h1 className="text-3xl font-bold tracking-tight">Transações</h1>
+                    <p className="text-sm text-muted-foreground">Histórico de movimentações.</p>
+                </div>
+                <div className="flex items-center gap-3">
+                    <PeriodFilter value={period} onChange={setPeriod} />
+                    <TransactionDialog onSuccess={fetchTransactions} />
+                </div>
             </div>
 
             <div className="space-y-4">

@@ -11,6 +11,8 @@ import { Button } from "@/components/ui/button"
 import { PeriodFilter } from "@/components/ui/period-filter"
 import type { Period } from "@/components/ui/period-filter"
 import { startOfMonth, endOfMonth, subMonths } from "date-fns"
+import { useSearchParams } from "react-router-dom"
+import { Filter } from "lucide-react"
 
 type Transaction = {
     id: string
@@ -27,6 +29,16 @@ export function TransactionsPage() {
     const [transactions, setTransactions] = useState<Transaction[]>([])
     const [loading, setLoading] = useState(true)
     const [period, setPeriod] = useState<Period>('current_month')
+    const [searchParams, setSearchParams] = useSearchParams()
+
+    // Filters
+    const [typeFilter, setTypeFilter] = useState<'all' | 'income' | 'expense'>(
+        (searchParams.get('type') as any) || 'all'
+    )
+    const [methodFilter, setMethodFilter] = useState<'all' | 'debit' | 'credit'>(
+        (searchParams.get('method') as any) || 'all'
+    )
+
     const { deleteTransaction } = useTransactions()
 
     const fetchTransactions = async () => {
@@ -59,6 +71,14 @@ export function TransactionsPage() {
                     .lte('date', endDate.toLocaleDateString('en-CA'))
             }
 
+            if (typeFilter !== 'all') {
+                query = query.eq('type', typeFilter)
+            }
+
+            if (methodFilter !== 'all') {
+                query = query.eq('payment_method', methodFilter)
+            }
+
             const { data, error } = await query
 
             if (error) throw error
@@ -72,7 +92,12 @@ export function TransactionsPage() {
 
     useEffect(() => {
         fetchTransactions()
-    }, [period])
+        // Sync URL search params
+        const params: any = {}
+        if (typeFilter !== 'all') params.type = typeFilter
+        if (methodFilter !== 'all') params.method = methodFilter
+        setSearchParams(params, { replace: true })
+    }, [period, typeFilter, methodFilter])
 
     const handleDelete = async (id: string) => {
         if (confirm("Deseja realmente excluir esta transação?")) {
@@ -88,13 +113,103 @@ export function TransactionsPage() {
             <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
                 <div>
                     <h1 className="text-3xl font-bold tracking-tight">Transações</h1>
-                    <p className="text-sm text-muted-foreground">Histórico de movimentações.</p>
+                    <p className="text-sm text-muted-foreground">Histórico de movimentações detalhado.</p>
                 </div>
                 <div className="flex items-center gap-3">
                     <PeriodFilter value={period} onChange={setPeriod} />
                     <TransactionDialog onSuccess={fetchTransactions} />
                 </div>
             </div>
+
+            {/* Advanced Filters */}
+            <Card className="bg-card/50 backdrop-blur-sm border-dashed">
+                <CardContent className="p-4 flex flex-wrap gap-4 items-center">
+                    <div className="flex items-center gap-2 mr-4">
+                        <Filter className="h-4 w-4 text-muted-foreground" />
+                        <span className="text-sm font-medium">Filtros:</span>
+                    </div>
+
+                    <div className="flex bg-muted rounded-lg p-1">
+                        <Button
+                            variant={typeFilter === 'all' ? "secondary" : "ghost"}
+                            size="sm"
+                            className="h-8 px-3"
+                            onClick={() => setTypeFilter('all')}
+                        >
+                            Tudo
+                        </Button>
+                        <Button
+                            variant={typeFilter === 'income' ? "secondary" : "ghost"}
+                            size="sm"
+                            className="h-8 px-3"
+                            onClick={() => setTypeFilter('income')}
+                        >
+                            Receitas
+                        </Button>
+                        <Button
+                            variant={typeFilter === 'expense' ? "secondary" : "ghost"}
+                            size="sm"
+                            className="h-8 px-3"
+                            onClick={() => setTypeFilter('expense')}
+                        >
+                            Despesas
+                        </Button>
+                    </div>
+
+                    <div className="flex bg-muted rounded-lg p-1">
+                        <Button
+                            variant={methodFilter === 'all' ? "secondary" : "ghost"}
+                            size="sm"
+                            className="h-8 px-3"
+                            onClick={() => setMethodFilter('all')}
+                        >
+                            Todos
+                        </Button>
+                        <Button
+                            variant={methodFilter === 'debit' ? "secondary" : "ghost"}
+                            size="sm"
+                            className="h-8 px-3"
+                            onClick={() => setMethodFilter('debit')}
+                        >
+                            Débito
+                        </Button>
+                        <Button
+                            variant={methodFilter === 'credit' ? "secondary" : "ghost"}
+                            size="sm"
+                            className="h-8 px-3"
+                            onClick={() => setMethodFilter('credit')}
+                        >
+                            Crédito
+                        </Button>
+                    </div>
+
+                    {(typeFilter !== 'all' || methodFilter !== 'all') && (
+                        <Button
+                            variant="link"
+                            size="sm"
+                            className="text-xs h-8"
+                            onClick={() => {
+                                setTypeFilter('all')
+                                setMethodFilter('all')
+                            }}
+                        >
+                            Limpar
+                        </Button>
+                    )}
+
+                    <div className="ml-auto flex items-center gap-2 text-sm font-bold text-muted-foreground bg-background/50 px-3 py-1.5 rounded-md border">
+                        Total Filtrado:
+                        <span className={cn(
+                            transactions.reduce((acc, t) => acc + (t.type === 'income' ? Number(t.amount) : -Number(t.amount)), 0) >= 0
+                                ? "text-emerald-500"
+                                : "text-rose-500"
+                        )}>
+                            {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' })
+                                .format(transactions.reduce((acc, t) => acc + (t.type === 'income' ? Number(t.amount) : -Number(t.amount)), 0))}
+                        </span>
+                    </div>
+                </CardContent>
+            </Card>
 
             <div className="space-y-4">
                 {loading ? (

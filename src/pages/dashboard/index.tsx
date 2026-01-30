@@ -4,14 +4,15 @@ import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip } from "recha
 import { ArrowUpCircle, ArrowDownCircle, DollarSign, CalendarDays, CreditCard } from "lucide-react"
 import { TransactionDialog } from "@/components/transactions/transaction-dialog"
 
+import { useNavigate } from "react-router-dom"
 import { useDashboardData } from "@/hooks/useDashboardData"
 import { supabase } from "@/lib/supabase"
-
 import { useState, useEffect } from "react"
 import { PeriodFilter } from "@/components/ui/period-filter"
 import type { Period } from "@/components/ui/period-filter"
 
 export function Dashboard() {
+    const navigate = useNavigate()
     const [period, setPeriod] = useState<Period>('current_month')
     const { data: dashboardData, loading } = useDashboardData(period)
     const [subTotal, setSubTotal] = useState(0)
@@ -49,7 +50,10 @@ export function Dashboard() {
 
             {/* Summary Cards */}
             <div className="grid gap-4 grid-cols-2 md:grid-cols-3 lg:grid-cols-5">
-                <Card className="col-span-2 md:col-span-1">
+                <Card
+                    className="col-span-2 md:col-span-1 cursor-pointer hover:shadow-md transition-all border-primary/20 bg-primary/5"
+                    onClick={() => navigate('/transactions')}
+                >
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                         <CardTitle className="text-sm font-medium">Saldo em Conta</CardTitle>
                         <DollarSign className="h-4 w-4 text-muted-foreground" />
@@ -61,7 +65,11 @@ export function Dashboard() {
                         <p className="text-xs text-muted-foreground">Dinheiro disponível (Débito)</p>
                     </CardContent>
                 </Card>
-                <Card>
+
+                <Card
+                    className="cursor-pointer hover:shadow-md transition-all hover:border-emerald-200"
+                    onClick={() => navigate('/transactions?type=income')}
+                >
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                         <CardTitle className="text-sm font-medium">Receitas</CardTitle>
                         <ArrowUpCircle className="h-4 w-4 text-emerald-500" />
@@ -73,7 +81,11 @@ export function Dashboard() {
                         <p className="text-xs text-muted-foreground">Entradas no período</p>
                     </CardContent>
                 </Card>
-                <Card>
+
+                <Card
+                    className="cursor-pointer hover:shadow-md transition-all hover:border-rose-200"
+                    onClick={() => navigate('/transactions?type=expense')}
+                >
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                         <CardTitle className="text-sm font-medium">Despesas</CardTitle>
                         <ArrowDownCircle className="h-4 w-4 text-rose-500" />
@@ -85,7 +97,11 @@ export function Dashboard() {
                         <p className="text-xs text-muted-foreground">Saídas no período</p>
                     </CardContent>
                 </Card>
-                <Card className="border-orange-200 bg-orange-50/30">
+
+                <Card
+                    className="border-orange-200 bg-orange-50/30 cursor-pointer hover:shadow-md transition-all hover:border-orange-400"
+                    onClick={() => navigate('/transactions?method=credit')}
+                >
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                         <CardTitle className="text-sm font-medium">Fatura (Crédito)</CardTitle>
                         <CreditCard className="h-4 w-4 text-orange-500" />
@@ -97,7 +113,11 @@ export function Dashboard() {
                         <p className="text-xs text-muted-foreground">Gasto pendente no cartão</p>
                     </CardContent>
                 </Card>
-                <Card>
+
+                <Card
+                    className="cursor-pointer hover:shadow-md transition-all hover:border-primary/40"
+                    onClick={() => navigate('/subscriptions')}
+                >
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                         <CardTitle className="text-sm font-medium">Assinaturas</CardTitle>
                         <CalendarDays className="h-4 w-4 text-primary" />

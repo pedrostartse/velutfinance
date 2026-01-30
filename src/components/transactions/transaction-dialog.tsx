@@ -120,7 +120,8 @@ export function TransactionDialog({
                 { name: 'Vestuário', type: 'expense', user_id: user.id },
                 { name: 'Esporte', type: 'expense', user_id: user.id },
                 { name: 'Salário', type: 'income', user_id: user.id },
-                { name: 'Investimentos', type: 'income', user_id: user.id },
+                { name: 'Investimento', type: 'income', user_id: user.id },
+                { name: 'Investimento', type: 'expense', user_id: user.id },
                 { name: 'Outros', type: 'income', user_id: user.id },
             ]
 

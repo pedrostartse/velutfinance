@@ -41,17 +41,17 @@ export function MobileNav() {
     }
 
     return (
-        <div className="fixed bottom-0 left-0 right-0 border-t bg-card/80 backdrop-blur-lg px-px py-3 pb-6 md:hidden z-40">
-            <div className="grid grid-cols-6 items-center justify-items-center relative max-w-lg mx-auto">
+        <div className="fixed bottom-0 left-0 right-0 border-t bg-card/80 backdrop-blur-xl px-2 py-3 pb-6 md:hidden z-50">
+            <div className="flex items-center justify-between relative max-w-lg mx-auto w-full px-1">
                 {navItemsStart.map((item) => (
                     <NavLink key={item.href} item={item} />
                 ))}
 
-                <div className="flex justify-center relative scale-110 -top-4">
+                <div className="flex justify-center relative scale-110 -top-5 mx-1">
                     <TransactionDialog
                         trigger={
                             <button
-                                className="rounded-full bg-primary p-3.5 text-primary-foreground shadow-2xl transition-all active:scale-90 hover:shadow-primary/30"
+                                className="rounded-full bg-primary p-3.5 text-primary-foreground shadow-2xl transition-all active:scale-95 hover:shadow-primary/40 ring-4 ring-background"
                                 aria-label="Nova Transação"
                             >
                                 <Plus className="h-6 w-6" />

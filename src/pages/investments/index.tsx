@@ -130,7 +130,7 @@ export function InvestmentsPage() {
                         </CardContent>
                     </Card>
                 ) : (
-                    <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                    <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 items-stretch">
                         {investments.map((inv, index) => {
                             const currentVal = inv.quantity * (inv.current_price || inv.average_price)
                             const investedVal = inv.quantity * inv.average_price
@@ -143,10 +143,11 @@ export function InvestmentsPage() {
                                     initial={{ opacity: 0, scale: 0.9 }}
                                     animate={{ opacity: 1, scale: 1 }}
                                     transition={{ delay: 0.1 * index }}
+                                    className="h-full"
                                 >
-                                    <Card className="group hover:shadow-lg transition-all border-primary/10 relative overflow-hidden">
+                                    <Card className="group hover:shadow-lg transition-all border-primary/10 relative overflow-hidden h-full flex flex-col">
                                         <div className="absolute top-0 left-0 w-1.5 h-full bg-primary opacity-0 group-hover:opacity-100 transition-opacity" />
-                                        <CardContent className="p-5">
+                                        <CardContent className="p-5 flex flex-col h-full">
                                             <div className="flex justify-between items-start mb-6">
                                                 <div className="min-w-0 flex-1">
                                                     <h3 className="font-bold text-xl group-hover:text-primary transition-colors truncate tracking-tight">{inv.symbol || inv.name}</h3>
@@ -175,7 +176,7 @@ export function InvestmentsPage() {
                                                 </div>
                                             </div>
 
-                                            <div className="space-y-4 mb-6">
+                                            <div className="flex-1 space-y-4 mb-6">
                                                 <div className="flex justify-between items-end border-b border-dashed pb-2">
                                                     <span className="text-xs text-muted-foreground font-medium uppercase tracking-wider">Valor Atual</span>
                                                     <span className="font-bold text-xl tracking-tight"><AnimatedNumber value={currentVal} /></span>
@@ -204,12 +205,12 @@ export function InvestmentsPage() {
                                                 )}
                                             </div>
 
-                                            <div className="mt-auto pt-4 border-t flex items-center justify-between">
-                                                <div className="flex items-center gap-1.5 text-[10px] text-muted-foreground font-medium">
+                                            <div className="mt-auto pt-4 border-t flex items-center justify-between min-h-[32px]">
+                                                <div className="flex items-center gap-1.5 text-[10px] text-muted-foreground font-medium leading-none">
                                                     <Calendar className="h-3 w-3 opacity-70" />
                                                     {format(new Date(inv.created_at), "dd/MM/yyyy", { locale: ptBR })}
                                                 </div>
-                                                <div className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${profit >= 0 ? 'bg-emerald-500/10 text-emerald-500' : 'bg-rose-500/10 text-rose-500'
+                                                <div className={`px-2 py-0.5 rounded-full text-[10px] font-bold leading-none flex items-center justify-center ${profit >= 0 ? 'bg-emerald-500/10 text-emerald-500' : 'bg-rose-500/10 text-rose-500'
                                                     }`}>
                                                     {profit >= 0 ? '+' : ''}{profitPer.toFixed(1)}%
                                                 </div>

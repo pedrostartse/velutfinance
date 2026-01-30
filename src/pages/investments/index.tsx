@@ -145,23 +145,18 @@ export function InvestmentsPage() {
                                     transition={{ delay: 0.1 * index }}
                                 >
                                     <Card className="group hover:shadow-lg transition-all border-primary/10 relative overflow-hidden">
-                                        <div className="absolute top-0 left-0 w-1 h-full bg-primary opacity-0 group-hover:opacity-100 transition-opacity" />
+                                        <div className="absolute top-0 left-0 w-1.5 h-full bg-primary opacity-0 group-hover:opacity-100 transition-opacity" />
                                         <CardContent className="p-5">
-                                            <div className="flex justify-between items-start mb-4">
-                                                <div className="min-w-0 flex-1 mr-2">
-                                                    <h3 className="font-bold text-lg group-hover:text-primary transition-colors truncate">{inv.symbol || inv.name}</h3>
-                                                    <p className="text-xs text-muted-foreground capitalize">{inv.type.replace('_', ' ')}</p>
+                                            <div className="flex justify-between items-start mb-6">
+                                                <div className="min-w-0 flex-1">
+                                                    <h3 className="font-bold text-xl group-hover:text-primary transition-colors truncate tracking-tight">{inv.symbol || inv.name}</h3>
                                                 </div>
-                                                <div className="flex items-center gap-1">
-                                                    <div className={`px-2 py-1 rounded text-[10px] font-bold uppercase shrink-0 ${profit >= 0 ? 'bg-emerald-500/10 text-emerald-500' : 'bg-rose-500/10 text-rose-500'
-                                                        }`}>
-                                                        {profit >= 0 ? '+' : ''}{profitPer.toFixed(1)}%
-                                                    </div>
-                                                    <div className="flex opacity-0 group-hover:opacity-100 transition-opacity">
+                                                <div className="flex items-center">
+                                                    <div className="flex opacity-0 group-hover:opacity-100 transition-all transform translate-x-1 group-hover:translate-x-0">
                                                         <InvestmentDialog
                                                             initialData={inv}
                                                             trigger={
-                                                                <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-primary">
+                                                                <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-primary hover:bg-primary/5">
                                                                     <Pencil className="h-3.5 w-3.5" />
                                                                 </Button>
                                                             }
@@ -169,7 +164,7 @@ export function InvestmentsPage() {
                                                         <Button
                                                             variant="ghost"
                                                             size="icon"
-                                                            className="h-8 w-8 text-muted-foreground hover:text-destructive"
+                                                            className="h-8 w-8 text-muted-foreground hover:text-destructive hover:bg-destructive/5"
                                                             onClick={() => {
                                                                 if (confirm('Deseja excluir este ativo?')) deleteInvestment(inv.id)
                                                             }}
@@ -180,38 +175,43 @@ export function InvestmentsPage() {
                                                 </div>
                                             </div>
 
-                                            <div className="space-y-3">
-                                                <div className="flex justify-between text-sm">
-                                                    <span className="text-muted-foreground">Posição:</span>
-                                                    <span className="font-bold"><AnimatedNumber value={currentVal} /></span>
+                                            <div className="space-y-4 mb-6">
+                                                <div className="flex justify-between items-end border-b border-dashed pb-2">
+                                                    <span className="text-xs text-muted-foreground font-medium uppercase tracking-wider">Valor Atual</span>
+                                                    <span className="font-bold text-xl tracking-tight"><AnimatedNumber value={currentVal} /></span>
                                                 </div>
+
                                                 {inv.type !== 'fixed_income' ? (
-                                                    <>
-                                                        <div className="flex justify-between text-xs">
-                                                            <span className="text-muted-foreground">Preço Médio:</span>
-                                                            <span className="font-medium text-foreground/80">R$ {inv.average_price.toFixed(2)}</span>
+                                                    <div className="grid grid-cols-2 gap-x-4 gap-y-2">
+                                                        <div className="space-y-0.5">
+                                                            <p className="text-[10px] text-muted-foreground uppercase font-semibold">Preço Médio</p>
+                                                            <p className="font-medium text-sm text-foreground/90">R$ {inv.average_price.toFixed(2)}</p>
                                                         </div>
-                                                        <div className="flex justify-between text-xs">
-                                                            <span className="text-muted-foreground">Preço Atual:</span>
-                                                            <span className="font-medium text-foreground/80">R$ {(inv.current_price || inv.average_price).toFixed(2)}</span>
+                                                        <div className="space-y-0.5 text-right">
+                                                            <p className="text-[10px] text-muted-foreground uppercase font-semibold">Preço Atual</p>
+                                                            <p className="font-medium text-sm text-foreground/90">R$ {(inv.current_price || inv.average_price).toFixed(2)}</p>
                                                         </div>
-                                                        <div className="flex justify-between text-xs">
-                                                            <span className="text-muted-foreground">Quantidade:</span>
-                                                            <span className="font-medium text-foreground/80">{inv.quantity}</span>
+                                                        <div className="space-y-0.5">
+                                                            <p className="text-[10px] text-muted-foreground uppercase font-semibold">Quantidade</p>
+                                                            <p className="font-medium text-sm text-foreground/90">{inv.quantity}</p>
                                                         </div>
-                                                    </>
+                                                    </div>
                                                 ) : (
-                                                    <div className="flex justify-between text-xs">
-                                                        <span className="text-muted-foreground">Valor Aplicado:</span>
-                                                        <span className="font-medium text-foreground/80">R$ {inv.average_price.toFixed(2)}</span>
+                                                    <div className="space-y-0.5">
+                                                        <p className="text-[10px] text-muted-foreground uppercase font-semibold">Valor Aplicado</p>
+                                                        <p className="font-medium text-sm text-foreground/90">R$ {inv.average_price.toFixed(2)}</p>
                                                     </div>
                                                 )}
                                             </div>
 
-                                            <div className="mt-4 pt-3 border-t flex items-center justify-between text-[10px] text-muted-foreground">
-                                                <div className="flex items-center gap-1">
-                                                    <Calendar className="h-3 w-3" />
-                                                    Adicionado em: {format(new Date(inv.created_at), "dd/MM/yyyy", { locale: ptBR })}
+                                            <div className="mt-auto pt-4 border-t flex items-center justify-between">
+                                                <div className="flex items-center gap-1.5 text-[10px] text-muted-foreground font-medium">
+                                                    <Calendar className="h-3 w-3 opacity-70" />
+                                                    {format(new Date(inv.created_at), "dd/MM/yyyy", { locale: ptBR })}
+                                                </div>
+                                                <div className={`px-2 py-0.5 rounded-full text-[10px] font-bold ${profit >= 0 ? 'bg-emerald-500/10 text-emerald-500' : 'bg-rose-500/10 text-rose-500'
+                                                    }`}>
+                                                    {profit >= 0 ? '+' : ''}{profitPer.toFixed(1)}%
                                                 </div>
                                             </div>
                                         </CardContent>

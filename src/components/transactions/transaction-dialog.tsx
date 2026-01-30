@@ -81,7 +81,9 @@ export function TransactionDialog({
             if (error) throw error
             if (data) {
                 const hasVestuario = data.some(c => c.name.toLowerCase() === 'vestuário')
-                if (data.length === 0 || !hasVestuario) {
+                const hasEsporte = data.some(c => c.name.toLowerCase() === 'esporte')
+
+                if (data.length === 0 || !hasVestuario || !hasEsporte) {
                     await seedCategories()
                 } else {
                     setCategories(data)
@@ -116,6 +118,7 @@ export function TransactionDialog({
                 { name: 'Saúde', type: 'expense', user_id: user.id },
                 { name: 'Educação', type: 'expense', user_id: user.id },
                 { name: 'Vestuário', type: 'expense', user_id: user.id },
+                { name: 'Esporte', type: 'expense', user_id: user.id },
                 { name: 'Salário', type: 'income', user_id: user.id },
                 { name: 'Investimentos', type: 'income', user_id: user.id },
                 { name: 'Outros', type: 'income', user_id: user.id },

@@ -95,7 +95,13 @@ export function InvestmentDialog({
                             <Label htmlFor="type">Tipo</Label>
                             <Select
                                 value={formData.type}
-                                onValueChange={(val: InvestmentType) => setFormData({ ...formData, type: val })}
+                                onValueChange={(val: InvestmentType) => {
+                                    setFormData({
+                                        ...formData,
+                                        type: val,
+                                        quantity: val === 'fixed_income' ? "1" : formData.quantity
+                                    })
+                                }}
                             >
                                 <SelectTrigger>
                                     <SelectValue placeholder="Selecione" />
@@ -131,30 +137,44 @@ export function InvestmentDialog({
                         />
                     </div>
 
-                    <div className="grid grid-cols-2 gap-4">
+                    {formData.type === 'fixed_income' ? (
                         <div className="grid gap-2 text-left">
-                            <Label htmlFor="quantity">Quantidade</Label>
-                            <Input
-                                id="quantity"
-                                type="text"
-                                value={formData.quantity}
-                                onChange={(e) => setFormData({ ...formData, quantity: e.target.value })}
-                                placeholder="0.00"
-                                required
-                            />
-                        </div>
-                        <div className="grid gap-2 text-left">
-                            <Label htmlFor="price">Preço Médio (R$)</Label>
+                            <Label htmlFor="price">Valor Investido (R$)</Label>
                             <Input
                                 id="price"
                                 type="text"
                                 value={formData.average_price}
-                                onChange={(e) => setFormData({ ...formData, average_price: e.target.value })}
+                                onChange={(e) => setFormData({ ...formData, average_price: e.target.value, quantity: "1" })}
                                 placeholder="0.00"
                                 required
                             />
                         </div>
-                    </div>
+                    ) : (
+                        <div className="grid grid-cols-2 gap-4">
+                            <div className="grid gap-2 text-left">
+                                <Label htmlFor="quantity">Quantidade</Label>
+                                <Input
+                                    id="quantity"
+                                    type="text"
+                                    value={formData.quantity}
+                                    onChange={(e) => setFormData({ ...formData, quantity: e.target.value })}
+                                    placeholder="0.00"
+                                    required
+                                />
+                            </div>
+                            <div className="grid gap-2 text-left">
+                                <Label htmlFor="price">Preço Médio (R$)</Label>
+                                <Input
+                                    id="price"
+                                    type="text"
+                                    value={formData.average_price}
+                                    onChange={(e) => setFormData({ ...formData, average_price: e.target.value })}
+                                    placeholder="0.00"
+                                    required
+                                />
+                            </div>
+                        </div>
+                    )}
 
                     <div className="grid gap-2 text-left">
                         <Label htmlFor="current_price" className="text-primary font-bold">Preço Atual (R$)</Label>

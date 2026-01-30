@@ -185,18 +185,27 @@ export function InvestmentsPage() {
                                                     <span className="text-muted-foreground">Posição:</span>
                                                     <span className="font-bold"><AnimatedNumber value={currentVal} /></span>
                                                 </div>
-                                                <div className="flex justify-between text-xs">
-                                                    <span className="text-muted-foreground">Preço Médio:</span>
-                                                    <span className="font-medium text-foreground/80">R$ {inv.average_price.toFixed(2)}</span>
-                                                </div>
-                                                <div className="flex justify-between text-xs">
-                                                    <span className="text-muted-foreground">Preço Atual:</span>
-                                                    <span className="font-medium text-foreground/80">R$ {(inv.current_price || inv.average_price).toFixed(2)}</span>
-                                                </div>
-                                                <div className="flex justify-between text-xs">
-                                                    <span className="text-muted-foreground">Quantidade:</span>
-                                                    <span className="font-medium text-foreground/80">{inv.quantity}</span>
-                                                </div>
+                                                {inv.type !== 'fixed_income' ? (
+                                                    <>
+                                                        <div className="flex justify-between text-xs">
+                                                            <span className="text-muted-foreground">Preço Médio:</span>
+                                                            <span className="font-medium text-foreground/80">R$ {inv.average_price.toFixed(2)}</span>
+                                                        </div>
+                                                        <div className="flex justify-between text-xs">
+                                                            <span className="text-muted-foreground">Preço Atual:</span>
+                                                            <span className="font-medium text-foreground/80">R$ {(inv.current_price || inv.average_price).toFixed(2)}</span>
+                                                        </div>
+                                                        <div className="flex justify-between text-xs">
+                                                            <span className="text-muted-foreground">Quantidade:</span>
+                                                            <span className="font-medium text-foreground/80">{inv.quantity}</span>
+                                                        </div>
+                                                    </>
+                                                ) : (
+                                                    <div className="flex justify-between text-xs">
+                                                        <span className="text-muted-foreground">Valor Aplicado:</span>
+                                                        <span className="font-medium text-foreground/80">R$ {inv.average_price.toFixed(2)}</span>
+                                                    </div>
+                                                )}
                                             </div>
 
                                             <div className="mt-4 pt-3 border-t flex items-center justify-between text-[10px] text-muted-foreground">

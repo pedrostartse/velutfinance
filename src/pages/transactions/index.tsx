@@ -133,94 +133,105 @@ export function TransactionsPage() {
                 transition={{ delay: 0.2 }}
             >
                 <Card className="bg-card/50 backdrop-blur-sm border-dashed">
-                    <CardContent className="p-4 flex flex-col sm:flex-row flex-wrap gap-4 items-start sm:items-center">
-                        <div className="flex items-center gap-2 mr-2">
-                            <Filter className="h-4 w-4 text-muted-foreground" />
-                            <span className="text-sm font-medium">Filtros:</span>
-                        </div>
-
-                        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 w-full sm:w-auto">
-                            <span className="text-[10px] uppercase font-bold text-muted-foreground/70 sm:hidden">Tipo</span>
-                            <div className="flex bg-muted rounded-lg p-1 w-full sm:w-auto overflow-x-auto">
-                                <Button
-                                    variant={typeFilter === 'all' ? "secondary" : "ghost"}
-                                    size="sm"
-                                    className="flex-1 sm:flex-none h-8 px-3"
-                                    onClick={() => setTypeFilter('all')}
-                                >
-                                    Todas
-                                </Button>
-                                <Button
-                                    variant={typeFilter === 'income' ? "secondary" : "ghost"}
-                                    size="sm"
-                                    className="flex-1 sm:flex-none h-8 px-3"
-                                    onClick={() => setTypeFilter('income')}
-                                >
-                                    Receitas
-                                </Button>
-                                <Button
-                                    variant={typeFilter === 'expense' ? "secondary" : "ghost"}
-                                    size="sm"
-                                    className="flex-1 sm:flex-none h-8 px-3"
-                                    onClick={() => setTypeFilter('expense')}
-                                >
-                                    Despesas
-                                </Button>
+                    <CardContent className="p-3 sm:p-4">
+                        <div className="flex flex-col lg:flex-row gap-4 items-start lg:items-center">
+                            <div className="flex items-center gap-2 mr-2 hidden lg:flex">
+                                <Filter className="h-4 w-4 text-muted-foreground" />
+                                <span className="text-sm font-medium">Filtros</span>
                             </div>
-                        </div>
 
-                        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 w-full sm:w-auto">
-                            <span className="text-[10px] uppercase font-bold text-muted-foreground/70 sm:hidden">Pagamento</span>
-                            <div className="flex bg-muted rounded-lg p-1 w-full sm:w-auto overflow-x-auto">
-                                <Button
-                                    variant={methodFilter === 'all' ? "secondary" : "ghost"}
-                                    size="sm"
-                                    className="flex-1 sm:flex-none h-8 px-3"
-                                    onClick={() => setMethodFilter('all')}
-                                >
-                                    Todas
-                                </Button>
-                                <Button
-                                    variant={methodFilter === 'debit' ? "secondary" : "ghost"}
-                                    size="sm"
-                                    className="flex-1 sm:flex-none h-8 px-3"
-                                    onClick={() => setMethodFilter('debit')}
-                                >
-                                    Débito
-                                </Button>
-                                <Button
-                                    variant={methodFilter === 'credit' ? "secondary" : "ghost"}
-                                    size="sm"
-                                    className="flex-1 sm:flex-none h-8 px-3"
-                                    onClick={() => setMethodFilter('credit')}
-                                >
-                                    Crédito
-                                </Button>
+                            <div className="flex flex-wrap items-center gap-4 flex-1 w-full">
+                                {/* Tipo Filter */}
+                                <div className="space-y-1.5 flex-1 min-w-[200px] sm:flex-none">
+                                    <span className="text-[10px] uppercase font-bold text-muted-foreground/60 ml-1">Tipo</span>
+                                    <div className="flex bg-muted/60 rounded-lg p-1">
+                                        <Button
+                                            variant={typeFilter === 'all' ? "secondary" : "ghost"}
+                                            size="sm"
+                                            className="flex-1 h-8 px-3"
+                                            onClick={() => setTypeFilter('all')}
+                                        >
+                                            Todas
+                                        </Button>
+                                        <Button
+                                            variant={typeFilter === 'income' ? "secondary" : "ghost"}
+                                            size="sm"
+                                            className="flex-1 h-8 px-3"
+                                            onClick={() => setTypeFilter('income')}
+                                        >
+                                            Receitas
+                                        </Button>
+                                        <Button
+                                            variant={typeFilter === 'expense' ? "secondary" : "ghost"}
+                                            size="sm"
+                                            className="flex-1 h-8 px-3"
+                                            onClick={() => setTypeFilter('expense')}
+                                        >
+                                            Despesas
+                                        </Button>
+                                    </div>
+                                </div>
+
+                                {/* Pagamento Filter */}
+                                <div className="space-y-1.5 flex-1 min-w-[200px] sm:flex-none">
+                                    <span className="text-[10px] uppercase font-bold text-muted-foreground/60 ml-1">Pagamento</span>
+                                    <div className="flex bg-muted/60 rounded-lg p-1">
+                                        <Button
+                                            variant={methodFilter === 'all' ? "secondary" : "ghost"}
+                                            size="sm"
+                                            className="flex-1 h-8 px-3"
+                                            onClick={() => setMethodFilter('all')}
+                                        >
+                                            Todas
+                                        </Button>
+                                        <Button
+                                            variant={methodFilter === 'debit' ? "secondary" : "ghost"}
+                                            size="sm"
+                                            className="flex-1 h-8 px-3"
+                                            onClick={() => setMethodFilter('debit')}
+                                        >
+                                            Débito
+                                        </Button>
+                                        <Button
+                                            variant={methodFilter === 'credit' ? "secondary" : "ghost"}
+                                            size="sm"
+                                            className="flex-1 h-8 px-3"
+                                            onClick={() => setMethodFilter('credit')}
+                                        >
+                                            Crédito
+                                        </Button>
+                                    </div>
+                                </div>
+
+                                {(typeFilter !== 'all' || methodFilter !== 'all') && (
+                                    <div className="self-end pb-1">
+                                        <Button
+                                            variant="ghost"
+                                            size="sm"
+                                            className="text-xs h-8 text-muted-foreground hover:text-primary"
+                                            onClick={() => {
+                                                setTypeFilter('all')
+                                                setMethodFilter('all')
+                                            }}
+                                        >
+                                            Limpar filtros
+                                        </Button>
+                                    </div>
+                                )}
                             </div>
-                        </div>
 
-                        {(typeFilter !== 'all' || methodFilter !== 'all') && (
-                            <Button
-                                variant="link"
-                                size="sm"
-                                className="text-xs h-8 px-0"
-                                onClick={() => {
-                                    setTypeFilter('all')
-                                    setMethodFilter('all')
-                                }}
-                            >
-                                Limpar filtros
-                            </Button>
-                        )}
-
-                        <div className="w-full sm:w-auto sm:ml-auto flex items-center justify-between sm:justify-end gap-2 text-sm font-bold text-muted-foreground bg-background/50 px-3 py-1.5 rounded-md border">
-                            <span className="opacity-70">Total Filtrado:</span>
-                            <div className={cn(
-                                transactions.reduce((acc, t) => acc + (t.type === 'income' ? Number(t.amount) : -Number(t.amount)), 0) >= 0
-                                    ? "text-emerald-500"
-                                    : "text-rose-500"
-                            )}>
-                                <AnimatedNumber value={transactions.reduce((acc, t) => acc + (t.type === 'income' ? Number(t.amount) : -Number(t.amount)), 0)} />
+                            <div className="w-full lg:w-auto lg:ml-auto">
+                                <div className="flex items-center justify-between lg:justify-end gap-4 text-sm font-bold bg-background/50 px-4 py-2.5 rounded-xl border border-dashed shadow-sm">
+                                    <span className="text-muted-foreground font-medium">Total Filtrado:</span>
+                                    <div className={cn(
+                                        "text-lg",
+                                        transactions.reduce((acc, t) => acc + (t.type === 'income' ? Number(t.amount) : -Number(t.amount)), 0) >= 0
+                                            ? "text-emerald-500"
+                                            : "text-rose-500"
+                                    )}>
+                                        <AnimatedNumber value={transactions.reduce((acc, t) => acc + (t.type === 'income' ? Number(t.amount) : -Number(t.amount)), 0)} />
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </CardContent>

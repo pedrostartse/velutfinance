@@ -23,13 +23,13 @@ export function Sidebar() {
     }
 
     return (
-        <div className="flex h-screen w-64 flex-col border-r bg-card px-4 py-6">
-            <div className="flex items-center gap-2 px-2">
+        <div className="flex h-screen w-64 flex-col border-r bg-card py-6">
+            <div className="flex items-center gap-2 px-6">
                 <PieChart className="h-6 w-6 text-primary" />
                 <span className="text-xl font-bold">FinControl</span>
             </div>
 
-            <nav className="mt-10 flex-1 space-y-2 px-2">
+            <nav className="mt-10 flex-1 space-y-2 px-3">
                 {navItems.map((item) => (
                     <Link to={item.href} key={item.href} className="block">
                         <Button
@@ -45,15 +45,17 @@ export function Sidebar() {
                 ))}
             </nav>
 
-            <div className="mt-auto pt-4 border-t px-2">
-                <Button
-                    variant="ghost"
-                    className="w-full justify-start gap-2 text-muted-foreground hover:text-destructive hover:bg-destructive/10 h-10 px-3"
-                    onClick={handleLogout}
-                >
-                    <LogOut className="h-4 w-4" />
-                    Sair
-                </Button>
+            <div className="mt-auto px-3">
+                <div className="pt-4 border-t">
+                    <Button
+                        variant="ghost"
+                        className="w-full justify-start gap-2 text-muted-foreground hover:text-destructive hover:bg-destructive/10 h-10 px-3"
+                        onClick={handleLogout}
+                    >
+                        <LogOut className="h-4 w-4" />
+                        Sair
+                    </Button>
+                </div>
             </div>
         </div>
     )

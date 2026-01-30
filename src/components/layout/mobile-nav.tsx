@@ -2,6 +2,7 @@ import { Link, useLocation } from "react-router-dom"
 import { LayoutDashboard, Wallet, Target, Plus } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { motion } from "framer-motion"
+import { TransactionDialog } from "../transactions/transaction-dialog"
 
 const navItems = [
     { name: "Home", href: "/", icon: LayoutDashboard },
@@ -36,12 +37,16 @@ export function MobileNav() {
                         </Link>
                     )
                 })}
-                <button
-                    className="absolute -top-6 left-1/2 -translate-x-1/2 rounded-full bg-primary p-4 text-primary-foreground shadow-lg transition-transform active:scale-95"
-                    aria-label="Nova Transação"
-                >
-                    <Plus className="h-6 w-6" />
-                </button>
+                <TransactionDialog
+                    trigger={
+                        <button
+                            className="absolute -top-6 left-1/2 -translate-x-1/2 rounded-full bg-primary p-4 text-primary-foreground shadow-lg transition-transform active:scale-95 z-50"
+                            aria-label="Nova Transação"
+                        >
+                            <Plus className="h-6 w-6" />
+                        </button>
+                    }
+                />
             </div>
         </div>
     )

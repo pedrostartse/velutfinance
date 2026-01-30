@@ -75,7 +75,7 @@ export function TransactionsPage() {
                 ) : (
                     transactions.map((t) => (
                         <Card key={t.id} className="overflow-hidden hover:shadow-sm transition-shadow">
-                            <div className="flex items-center justify-between p-4">
+                            <div className="flex flex-col sm:flex-row sm:items-center justify-between p-4 gap-4">
                                 <div className="flex flex-col gap-1">
                                     <span className="font-semibold">{t.description}</span>
                                     <div className="flex items-center gap-2 text-xs text-muted-foreground">
@@ -84,8 +84,8 @@ export function TransactionsPage() {
                                         <span>{t.categories?.name || 'Sem Categoria'}</span>
                                     </div>
                                 </div>
-                                <div className="flex items-center gap-4">
-                                    <div className={`font-bold ${t.type === 'income' ? 'text-emerald-500' : 'text-rose-500'}`}>
+                                <div className="flex items-center justify-between sm:justify-end gap-4 border-t pt-3 sm:border-0 sm:pt-0">
+                                    <div className={`font-bold text-lg ${t.type === 'income' ? 'text-emerald-500' : 'text-rose-500'}`}>
                                         {t.type === 'income' ? '+' : '-'}
                                         {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(Number(t.amount))}
                                     </div>

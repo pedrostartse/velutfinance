@@ -5,9 +5,10 @@ FinControl é uma aplicação moderna e minimalista para gestão de finanças pe
 ## 🚀 Funcionalidades
 
 - **Dashboard**: Visão geral de saldo, receitas e despesas com gráficos dinâmicos.
-- **Transações**: CRUD completo (Criação, Leitura, Edição e Exclusão) de movimentações financeiras.
+- **Investimentos**: Acompanhamento de patrimônio em tempo real com suporte a Ações, FIIs e Renda Fixa.
+- **Transações**: CRUD completo de movimentações financeiras com categorias inteligentes.
 - **Metas**: Definição e acompanhamento de objetivos de economia com barra de progresso.
-- **Categorias**: Sistema de categorias inteligentes separadas por tipo (Entrada/Saída).
+- **Assinaturas**: Gestão de pagamentos recorrentes e assinaturas mensais/anuais.
 - **Autenticação**: Sistema seguro de login e cadastro via Supabase.
 
 ## 🛠️ Tecnologias Utilizadas
@@ -15,6 +16,7 @@ FinControl é uma aplicação moderna e minimalista para gestão de finanças pe
 - **Frontend**: [React](https://reactjs.org/) + [Vite](https://vitejs.dev/) + [TypeScript](https://www.typescriptlang.org/)
 - **Estilização**: [Tailwind CSS](https://tailwindcss.com/) + [Shadcn/UI](https://ui.shadcn.com/)
 - **Gráficos**: [Recharts](https://recharts.org/)
+- **Dados Financeiros**: [Brapi API](https://brapi.dev/) (Cotações em tempo real)
 - **Backend/Auth**: [Supabase](https://supabase.com/)
 
 ## ⚙️ Configuração Local

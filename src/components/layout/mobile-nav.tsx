@@ -1,8 +1,9 @@
 import { Link, useLocation } from "react-router-dom"
-import { LayoutDashboard, Wallet, Target, Plus, CalendarDays, TrendingUp } from "lucide-react"
+import { LayoutDashboard, Wallet, Target, Plus, CalendarDays, TrendingUp, LogOut } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { motion } from "framer-motion"
 import { TransactionDialog } from "../transactions/transaction-dialog"
+import { supabase } from "@/lib/supabase"
 
 const navItemsStart = [
     { name: "Home", href: "/", icon: LayoutDashboard },
@@ -17,6 +18,12 @@ const navItemsEnd = [
 
 export function MobileNav() {
     const location = useLocation()
+
+    const handleLogout = async () => {
+        if (confirm('Deseja realmente sair?')) {
+            await supabase.auth.signOut()
+        }
+    }
 
     const NavLink = ({ item }: { item: typeof navItemsStart[0] }) => {
         const isActive = location.pathname === item.href
@@ -63,6 +70,13 @@ export function MobileNav() {
                 {navItemsEnd.map((item) => (
                     <NavLink key={item.href} item={item} />
                 ))}
+
+                <button
+                    onClick={handleLogout}
+                    className="flex flex-col items-center gap-1 p-2 text-muted-foreground hover:text-destructive transition-colors"
+                >
+                    <LogOut className="h-5 w-5" />
+                </button>
             </div>
         </div>
     )

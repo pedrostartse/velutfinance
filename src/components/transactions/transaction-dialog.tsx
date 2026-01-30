@@ -55,7 +55,7 @@ export function TransactionDialog({
         amount: "",
         type: "expense",
         category_id: "",
-        date: new Date().toISOString().split('T')[0]
+        date: new Date().toLocaleDateString('en-CA') // YYYY-MM-DD local format
     })
 
     const isEditing = !!initialData?.id
@@ -145,7 +145,7 @@ export function TransactionDialog({
                     amount: "",
                     type: "expense",
                     category_id: "",
-                    date: new Date().toISOString().split('T')[0]
+                    date: new Date().toLocaleDateString('en-CA')
                 })
             }
             if (onSuccess) {

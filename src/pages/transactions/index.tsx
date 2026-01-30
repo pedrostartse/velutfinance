@@ -79,7 +79,7 @@ export function TransactionsPage() {
                                 <div className="flex flex-col gap-1">
                                     <span className="font-semibold">{t.description}</span>
                                     <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                                        <span>{format(new Date(t.date), "dd 'de' MMM, yyyy", { locale: ptBR })}</span>
+                                        <span>{format(new Date(t.date + 'T12:00:00'), "dd 'de' MMM, yyyy", { locale: ptBR })}</span>
                                         <span>•</span>
                                         <span>{t.categories?.name || 'Sem Categoria'}</span>
                                     </div>

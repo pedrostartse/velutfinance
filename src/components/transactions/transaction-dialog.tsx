@@ -120,8 +120,8 @@ export function TransactionDialog({
                 { name: 'Vestuário', type: 'expense', user_id: user.id },
                 { name: 'Esporte', type: 'expense', user_id: user.id },
                 { name: 'Salário', type: 'income', user_id: user.id },
-                { name: 'Investimento', type: 'income', user_id: user.id },
-                { name: 'Investimento', type: 'expense', user_id: user.id },
+                { name: 'Investimentos', type: 'income', user_id: user.id },
+                { name: 'Investimentos', type: 'expense', user_id: user.id },
                 { name: 'Outros', type: 'income', user_id: user.id },
             ]
 
@@ -205,7 +205,7 @@ export function TransactionDialog({
                     </DialogDescription>
                 </DialogHeader>
                 <form onSubmit={handleSubmit} className="grid gap-4 py-4">
-                    <div className="grid grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div className="grid gap-2">
                             <Label htmlFor="type">Tipo</Label>
                             <Select
@@ -278,7 +278,7 @@ export function TransactionDialog({
                         />
                     </div>
 
-                    <div className="grid grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div className="grid gap-2">
                             <Label htmlFor="date">Data</Label>
                             <Input

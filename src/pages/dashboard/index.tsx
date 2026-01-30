@@ -10,6 +10,23 @@ import { supabase } from "@/lib/supabase"
 import { useState, useEffect } from "react"
 import { PeriodFilter } from "@/components/ui/period-filter"
 import type { Period } from "@/components/ui/period-filter"
+import { motion } from "framer-motion"
+import { AnimatedNumber } from "@/components/ui/animated-number"
+
+const containerVariants = {
+    hidden: { opacity: 0 },
+    show: {
+        opacity: 1,
+        transition: {
+            staggerChildren: 0.1
+        }
+    }
+}
+
+const itemVariants = {
+    hidden: { opacity: 0, y: 20 },
+    show: { opacity: 1, y: 0 }
+}
 
 export function Dashboard() {
     const navigate = useNavigate()
@@ -36,8 +53,12 @@ export function Dashboard() {
     const { balance, income, expense, creditInvoice, recentTransactions, categoryStats } = dashboardData
 
     return (
-        <div className="space-y-6 animate-in fade-in duration-500">
-            <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+        <div className="space-y-6">
+            <motion.div
+                initial={{ opacity: 0, y: -20 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between"
+            >
                 <div>
                     <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
                     <p className="text-sm text-muted-foreground">Bem-vindo ao seu controle financeiro.</p>
@@ -46,93 +67,113 @@ export function Dashboard() {
                     <PeriodFilter value={period} onChange={setPeriod} />
                     <TransactionDialog />
                 </div>
-            </div>
+            </motion.div>
 
             {/* Summary Cards */}
-            <div className="grid gap-4 grid-cols-2 md:grid-cols-3 lg:grid-cols-5">
-                <Card
-                    className="col-span-2 md:col-span-1 cursor-pointer hover:shadow-md transition-all border-primary/20 bg-primary/5"
-                    onClick={() => navigate('/transactions')}
-                >
-                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                        <CardTitle className="text-sm font-medium">Saldo em Conta</CardTitle>
-                        <DollarSign className="h-4 w-4 text-muted-foreground" />
-                    </CardHeader>
-                    <CardContent>
-                        <div className="text-2xl font-bold">
-                            {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(balance)}
-                        </div>
-                        <p className="text-xs text-muted-foreground">Dinheiro disponível (Débito)</p>
-                    </CardContent>
-                </Card>
+            <motion.div
+                variants={containerVariants}
+                initial="hidden"
+                animate="show"
+                className="grid gap-4 grid-cols-2 md:grid-cols-3 lg:grid-cols-5"
+            >
+                <motion.div variants={itemVariants} className="col-span-2 md:col-span-1">
+                    <Card
+                        className="h-full cursor-pointer hover:shadow-md transition-all border-primary/20 bg-primary/5 active:scale-95"
+                        onClick={() => navigate('/transactions')}
+                    >
+                        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                            <CardTitle className="text-sm font-medium">Saldo em Conta</CardTitle>
+                            <DollarSign className="h-4 w-4 text-muted-foreground" />
+                        </CardHeader>
+                        <CardContent>
+                            <div className="text-2xl font-bold">
+                                <AnimatedNumber value={balance} />
+                            </div>
+                            <p className="text-xs text-muted-foreground">Dinheiro disponível (Débito)</p>
+                        </CardContent>
+                    </Card>
+                </motion.div>
 
-                <Card
-                    className="cursor-pointer hover:shadow-md transition-all hover:border-emerald-200"
-                    onClick={() => navigate('/transactions?type=income')}
-                >
-                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                        <CardTitle className="text-sm font-medium">Receitas</CardTitle>
-                        <ArrowUpCircle className="h-4 w-4 text-emerald-500" />
-                    </CardHeader>
-                    <CardContent>
-                        <div className="text-2xl font-bold text-emerald-500">
-                            {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(income)}
-                        </div>
-                        <p className="text-xs text-muted-foreground">Entradas no período</p>
-                    </CardContent>
-                </Card>
+                <motion.div variants={itemVariants}>
+                    <Card
+                        className="h-full cursor-pointer hover:shadow-md transition-all hover:border-emerald-200 active:scale-95"
+                        onClick={() => navigate('/transactions?type=income')}
+                    >
+                        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                            <CardTitle className="text-sm font-medium">Receitas</CardTitle>
+                            <ArrowUpCircle className="h-4 w-4 text-emerald-500" />
+                        </CardHeader>
+                        <CardContent>
+                            <div className="text-2xl font-bold text-emerald-500">
+                                <AnimatedNumber value={income} />
+                            </div>
+                            <p className="text-xs text-muted-foreground">Entradas no período</p>
+                        </CardContent>
+                    </Card>
+                </motion.div>
 
-                <Card
-                    className="cursor-pointer hover:shadow-md transition-all hover:border-rose-200"
-                    onClick={() => navigate('/transactions?type=expense')}
-                >
-                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                        <CardTitle className="text-sm font-medium">Despesas</CardTitle>
-                        <ArrowDownCircle className="h-4 w-4 text-rose-500" />
-                    </CardHeader>
-                    <CardContent>
-                        <div className="text-2xl font-bold text-rose-500">
-                            {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(expense)}
-                        </div>
-                        <p className="text-xs text-muted-foreground">Saídas no período</p>
-                    </CardContent>
-                </Card>
+                <motion.div variants={itemVariants}>
+                    <Card
+                        className="h-full cursor-pointer hover:shadow-md transition-all hover:border-rose-200 active:scale-95"
+                        onClick={() => navigate('/transactions?type=expense')}
+                    >
+                        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                            <CardTitle className="text-sm font-medium">Despesas</CardTitle>
+                            <ArrowDownCircle className="h-4 w-4 text-rose-500" />
+                        </CardHeader>
+                        <CardContent>
+                            <div className="text-2xl font-bold text-rose-500">
+                                <AnimatedNumber value={expense} />
+                            </div>
+                            <p className="text-xs text-muted-foreground">Saídas no período</p>
+                        </CardContent>
+                    </Card>
+                </motion.div>
 
-                <Card
-                    className="border-orange-200 bg-orange-50/30 cursor-pointer hover:shadow-md transition-all hover:border-orange-400"
-                    onClick={() => navigate('/transactions?method=credit')}
-                >
-                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                        <CardTitle className="text-sm font-medium">Fatura (Crédito)</CardTitle>
-                        <CreditCard className="h-4 w-4 text-orange-500" />
-                    </CardHeader>
-                    <CardContent>
-                        <div className="text-2xl font-bold text-orange-600">
-                            {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(creditInvoice)}
-                        </div>
-                        <p className="text-xs text-muted-foreground">Gasto pendente no cartão</p>
-                    </CardContent>
-                </Card>
+                <motion.div variants={itemVariants}>
+                    <Card
+                        className="h-full border-orange-200 bg-orange-50/30 cursor-pointer hover:shadow-md transition-all hover:border-orange-400 active:scale-95"
+                        onClick={() => navigate('/transactions?method=credit')}
+                    >
+                        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                            <CardTitle className="text-sm font-medium">Fatura (Crédito)</CardTitle>
+                            <CreditCard className="h-4 w-4 text-orange-500" />
+                        </CardHeader>
+                        <CardContent>
+                            <div className="text-2xl font-bold text-orange-600">
+                                <AnimatedNumber value={creditInvoice} />
+                            </div>
+                            <p className="text-xs text-muted-foreground">Gasto pendente no cartão</p>
+                        </CardContent>
+                    </Card>
+                </motion.div>
 
-                <Card
-                    className="cursor-pointer hover:shadow-md transition-all hover:border-primary/40"
-                    onClick={() => navigate('/subscriptions')}
-                >
-                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                        <CardTitle className="text-sm font-medium">Assinaturas</CardTitle>
-                        <CalendarDays className="h-4 w-4 text-primary" />
-                    </CardHeader>
-                    <CardContent>
-                        <div className="text-2xl font-bold text-primary">
-                            {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(subTotal)}
-                        </div>
-                        <p className="text-xs text-muted-foreground">Custo fixo mensal ativo</p>
-                    </CardContent>
-                </Card>
-            </div>
+                <motion.div variants={itemVariants}>
+                    <Card
+                        className="h-full cursor-pointer hover:shadow-md transition-all hover:border-primary/40 active:scale-95"
+                        onClick={() => navigate('/subscriptions')}
+                    >
+                        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                            <CardTitle className="text-sm font-medium">Assinaturas</CardTitle>
+                            <CalendarDays className="h-4 w-4 text-primary" />
+                        </CardHeader>
+                        <CardContent>
+                            <div className="text-2xl font-bold text-primary">
+                                <AnimatedNumber value={subTotal} />
+                            </div>
+                            <p className="text-xs text-muted-foreground">Custo fixo mensal ativo</p>
+                        </CardContent>
+                    </Card>
+                </motion.div>
+            </motion.div>
 
             {/* Charts area */}
-            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
+            <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.6 }}
+                className="grid gap-4 md:grid-cols-2 lg:grid-cols-7"
+            >
                 <Card className="md:col-span-2 lg:col-span-4">
                     <CardHeader>
                         <CardTitle>Gastos por Categoria</CardTitle>
@@ -210,7 +251,7 @@ export function Dashboard() {
                         </div>
                     </CardContent>
                 </Card>
-            </div>
+            </motion.div>
         </div>
     )
 }

@@ -100,10 +100,10 @@ export function useDashboardData(period: Period = 'current_month') {
                         statsMap.set(catName, current + Number(t.amount))
                     })
 
-                const categoryStats = Array.from(statsMap.entries()).map(([name, value]) => ({
+                const categoryStats = Array.from(statsMap.entries()).map(([name, value], index) => ({
                     name,
                     value,
-                    color: generateColor(name)
+                    color: generateColor(index)
                 }))
 
                 setData({
@@ -127,13 +127,17 @@ export function useDashboardData(period: Period = 'current_month') {
     return { data, loading }
 }
 
-function generateColor(name: string) {
-    // Generate a consistent color based on string hash
-    let hash = 0
-    for (let i = 0; i < name.length; i++) {
-        hash = name.charCodeAt(i) + ((hash << 5) - hash)
-    }
-    const colors = ['#ef4444', '#3b82f6', '#10b981', '#f59e0b', '#8b5cf6', '#ec4899', '#06b6d4', '#84cc16']
-    return colors[Math.abs(hash) % colors.length]
+function generateColor(index: number) {
+    const colors = [
+        '#ef4444', // Red
+        '#3b82f6', // Blue
+        '#10b981', // Emerald
+        '#f59e0b', // Amber
+        '#8b5cf6', // Violet
+        '#ec4899', // Pink
+        '#06b6d4', // Cyan
+        '#f97316'  // Orange
+    ]
+    return colors[index % colors.length]
 }
 

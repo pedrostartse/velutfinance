@@ -79,7 +79,14 @@ export function TransactionDialog({
                 .select('id, name, type')
 
             if (error) throw error
-            if (data) setCategories(data)
+            if (data) {
+                const hasVestuario = data.some(c => c.name.toLowerCase() === 'vestuário')
+                if (data.length === 0 || !hasVestuario) {
+                    await seedCategories()
+                } else {
+                    setCategories(data)
+                }
+            }
         } catch (error) {
             console.error("Error fetching categories:", error)
         } finally {
@@ -93,18 +100,33 @@ export function TransactionDialog({
             const { data: { user } } = await supabase.auth.getUser()
             if (!user) return
 
+            // Fetch existing categories to avoid duplicates
+            const { data: existing } = await supabase
+                .from('categories')
+                .select('name')
+                .eq('user_id', user.id)
+
+            const existingNames = new Set(existing?.map(c => c.name.toLowerCase()) || [])
+
             const defaultCategories = [
                 { name: 'Alimentação', type: 'expense', user_id: user.id },
                 { name: 'Transporte', type: 'expense', user_id: user.id },
                 { name: 'Lazer', type: 'expense', user_id: user.id },
                 { name: 'Moradia', type: 'expense', user_id: user.id },
+                { name: 'Saúde', type: 'expense', user_id: user.id },
+                { name: 'Educação', type: 'expense', user_id: user.id },
+                { name: 'Vestuário', type: 'expense', user_id: user.id },
                 { name: 'Salário', type: 'income', user_id: user.id },
                 { name: 'Investimentos', type: 'income', user_id: user.id },
                 { name: 'Outros', type: 'income', user_id: user.id },
             ]
 
-            const { error } = await supabase.from('categories').insert(defaultCategories)
-            if (error) throw error
+            const toInsert = defaultCategories.filter(cat => !existingNames.has(cat.name.toLowerCase()))
+
+            if (toInsert.length > 0) {
+                const { error } = await supabase.from('categories').insert(toInsert)
+                if (error) throw error
+            }
 
             await fetchCategories()
         } catch (error) {

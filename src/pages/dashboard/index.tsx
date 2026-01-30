@@ -1,6 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { cn } from "@/lib/utils"
 import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip } from "recharts"
-import { ArrowUpCircle, ArrowDownCircle, DollarSign, CalendarDays } from "lucide-react"
+import { ArrowUpCircle, ArrowDownCircle, DollarSign, CalendarDays, CreditCard } from "lucide-react"
 import { TransactionDialog } from "@/components/transactions/transaction-dialog"
 
 import { useDashboardData } from "@/hooks/useDashboardData"
@@ -31,7 +32,7 @@ export function Dashboard() {
         )
     }
 
-    const { balance, income, expense, recentTransactions, categoryStats } = dashboardData
+    const { balance, income, expense, creditInvoice, recentTransactions, categoryStats } = dashboardData
 
     return (
         <div className="space-y-6 animate-in fade-in duration-500">
@@ -47,17 +48,17 @@ export function Dashboard() {
             </div>
 
             {/* Summary Cards */}
-            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
                 <Card>
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                        <CardTitle className="text-sm font-medium">Saldo Total</CardTitle>
+                        <CardTitle className="text-sm font-medium">Saldo em Conta</CardTitle>
                         <DollarSign className="h-4 w-4 text-muted-foreground" />
                     </CardHeader>
                     <CardContent>
                         <div className="text-2xl font-bold">
                             {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(balance)}
                         </div>
-                        <p className="text-xs text-muted-foreground">Valor acumulado total</p>
+                        <p className="text-xs text-muted-foreground">Dinheiro disponível (Débito)</p>
                     </CardContent>
                 </Card>
                 <Card>
@@ -69,7 +70,7 @@ export function Dashboard() {
                         <div className="text-2xl font-bold text-emerald-500">
                             {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(income)}
                         </div>
-                        <p className="text-xs text-muted-foreground">No período selecionado</p>
+                        <p className="text-xs text-muted-foreground">Entradas no período</p>
                     </CardContent>
                 </Card>
                 <Card>
@@ -81,7 +82,19 @@ export function Dashboard() {
                         <div className="text-2xl font-bold text-rose-500">
                             {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(expense)}
                         </div>
-                        <p className="text-xs text-muted-foreground">No período selecionado</p>
+                        <p className="text-xs text-muted-foreground">Saídas no período</p>
+                    </CardContent>
+                </Card>
+                <Card className="border-orange-200 bg-orange-50/30">
+                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                        <CardTitle className="text-sm font-medium">Fatura (Crédito)</CardTitle>
+                        <CreditCard className="h-4 w-4 text-orange-500" />
+                    </CardHeader>
+                    <CardContent>
+                        <div className="text-2xl font-bold text-orange-600">
+                            {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(creditInvoice)}
+                        </div>
+                        <p className="text-xs text-muted-foreground">Gasto pendente no cartão</p>
                     </CardContent>
                 </Card>
                 <Card>
@@ -149,8 +162,18 @@ export function Dashboard() {
                             {recentTransactions.length > 0 ? (
                                 recentTransactions.map((t) => (
                                     <div key={t.id} className="flex items-center justify-between border-b pb-2 last:border-0 last:pb-0">
-                                        <div>
-                                            <p className="text-sm font-medium leading-none">{t.description}</p>
+                                        <div className="space-y-1">
+                                            <div className="flex items-center gap-2">
+                                                <p className="text-sm font-medium leading-none">{t.description}</p>
+                                                <span className={cn(
+                                                    "text-[9px] px-1 py-0 rounded-full uppercase font-bold",
+                                                    t.payment_method === 'credit'
+                                                        ? "bg-orange-100 text-orange-600 border border-orange-200"
+                                                        : "bg-blue-100 text-blue-600 border border-blue-200"
+                                                )}>
+                                                    {t.payment_method === 'credit' ? 'C' : 'D'}
+                                                </span>
+                                            </div>
                                             <p className="text-sm text-muted-foreground">{t.categories?.name || 'Sem Categoria'}</p>
                                         </div>
                                         <div className={`font-medium ${t.type === 'income' ? 'text-emerald-500' : 'text-rose-500'}`}>

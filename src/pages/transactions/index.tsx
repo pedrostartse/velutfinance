@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react"
 import { supabase } from "@/lib/supabase"
+import { cn } from "@/lib/utils"
 import { Card, CardContent } from "@/components/ui/card"
 import { TransactionDialog } from "@/components/transactions/transaction-dialog"
 import { format } from "date-fns"
@@ -18,6 +19,7 @@ type Transaction = {
     type: 'income' | 'expense'
     date: string
     category_id: string | null
+    payment_method: 'debit' | 'credit'
     categories: { name: string, icon: string } | null
 }
 
@@ -111,7 +113,17 @@ export function TransactionsPage() {
                         <Card key={t.id} className="overflow-hidden hover:shadow-sm transition-shadow">
                             <div className="flex flex-col sm:flex-row sm:items-center justify-between p-4 gap-4">
                                 <div className="flex flex-col gap-1">
-                                    <span className="font-semibold">{t.description}</span>
+                                    <div className="flex items-center gap-2">
+                                        <p className="font-semibold">{t.description}</p>
+                                        <span className={cn(
+                                            "text-[10px] px-1.5 py-0.5 rounded-full uppercase font-bold",
+                                            t.payment_method === 'credit'
+                                                ? "bg-orange-100 text-orange-600 border border-orange-200"
+                                                : "bg-blue-100 text-blue-600 border border-blue-200"
+                                        )}>
+                                            {t.payment_method === 'credit' ? 'Crédito' : 'Débito'}
+                                        </span>
+                                    </div>
                                     <div className="flex items-center gap-2 text-xs text-muted-foreground">
                                         <span>{format(new Date(t.date + 'T12:00:00'), "dd 'de' MMM, yyyy", { locale: ptBR })}</span>
                                         <span>•</span>
@@ -132,7 +144,8 @@ export function TransactionsPage() {
                                                 amount: t.amount,
                                                 type: t.type,
                                                 category_id: t.category_id,
-                                                date: t.date
+                                                date: t.date,
+                                                payment_method: t.payment_method
                                             }}
                                             trigger={
                                                 <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-primary">

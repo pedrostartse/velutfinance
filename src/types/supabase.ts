@@ -48,6 +48,7 @@ export interface Database {
                     date: string
                     status: 'paid' | 'pending'
                     type: 'income' | 'expense'
+                    payment_method: 'debit' | 'credit'
                     created_at: string
                 }
                 Insert: {
@@ -59,6 +60,7 @@ export interface Database {
                     date?: string
                     status?: 'paid' | 'pending'
                     type: 'income' | 'expense'
+                    payment_method?: 'debit' | 'credit'
                     created_at?: string
                 }
                 Update: {
@@ -70,6 +72,7 @@ export interface Database {
                     date?: string
                     status?: 'paid' | 'pending'
                     type?: 'income' | 'expense'
+                    payment_method?: 'debit' | 'credit'
                     created_at?: string
                 }
             }

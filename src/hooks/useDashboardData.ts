@@ -13,12 +13,14 @@ export function useDashboardData(period: Period = 'current_month') {
         balance: number
         income: number
         expense: number
+        creditInvoice: number
         recentTransactions: (Transaction & { categories: Category | null })[]
         categoryStats: { name: string; value: number; color: string }[]
     }>({
         balance: 0,
         income: 0,
         expense: 0,
+        creditInvoice: 0,
         recentTransactions: [],
         categoryStats: []
     })
@@ -35,6 +37,7 @@ export function useDashboardData(period: Period = 'current_month') {
                         balance: 2450.00,
                         income: 4550.00,
                         expense: 2100.00,
+                        creditInvoice: 850.00,
                         recentTransactions: [],
                         categoryStats: [
                             { name: 'Alimentação', value: 400, color: '#ef4444' },
@@ -47,7 +50,6 @@ export function useDashboardData(period: Period = 'current_month') {
                     return
                 }
 
-                // Fetch all transactions for balance, but filter for period stats
                 const { data: allTransactions, error } = await supabase
                     .from('transactions')
                     .select('*, categories(*)')
@@ -56,12 +58,15 @@ export function useDashboardData(period: Period = 'current_month') {
                 if (error) throw error
                 const transactions = allTransactions || []
 
-                // Calculate Lifetime Balance
+                // Calculate Lifetime Balance (Available Cash)
+                // income - debit_expenses
                 const lifetimeIncome = transactions.filter(t => t.type === 'income').reduce((acc, t) => acc + Number(t.amount), 0)
-                const lifetimeExpense = transactions.filter(t => t.type === 'expense').reduce((acc, t) => acc + Number(t.amount), 0)
+                const lifetimeDebitExpense = transactions
+                    .filter(t => t.type === 'expense' && t.payment_method === 'debit')
+                    .reduce((acc, t) => acc + Number(t.amount), 0)
 
                 // Define Period Range
-                let startDate = new Date(0) // Default to all time
+                let startDate = new Date(0)
                 let endDate = new Date()
 
                 if (period === 'current_month') {
@@ -91,6 +96,11 @@ export function useDashboardData(period: Period = 'current_month') {
                     .filter(t => t.type === 'expense')
                     .reduce((acc, t) => acc + Number(t.amount), 0)
 
+                // Only Credit Expenses in the period
+                const creditInvoice = periodTransactions
+                    .filter(t => t.type === 'expense' && t.payment_method === 'credit')
+                    .reduce((acc, t) => acc + Number(t.amount), 0)
+
                 const statsMap = new Map<string, number>()
                 periodTransactions
                     .filter(t => t.type === 'expense')
@@ -107,9 +117,10 @@ export function useDashboardData(period: Period = 'current_month') {
                 }))
 
                 setData({
-                    balance: lifetimeIncome - lifetimeExpense,
+                    balance: lifetimeIncome - lifetimeDebitExpense,
                     income,
                     expense,
+                    creditInvoice,
                     recentTransactions: periodTransactions.slice(0, 5),
                     categoryStats
                 })

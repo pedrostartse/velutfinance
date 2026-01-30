@@ -34,6 +34,7 @@ export type TransactionFormData = {
     type: 'income' | 'expense'
     category_id: string | null
     date: string
+    payment_method: 'debit' | 'credit'
 }
 
 export function TransactionDialog({
@@ -55,7 +56,8 @@ export function TransactionDialog({
         amount: "",
         type: "expense",
         category_id: "",
-        date: new Date().toLocaleDateString('en-CA') // YYYY-MM-DD local format
+        date: new Date().toLocaleDateString('en-CA'), // YYYY-MM-DD local format
+        payment_method: "debit"
     })
 
     const isEditing = !!initialData?.id
@@ -125,6 +127,7 @@ export function TransactionDialog({
                 amount: Number(formData.amount),
                 type: formData.type,
                 date: formData.date,
+                payment_method: formData.payment_method,
                 category_id: formData.category_id || null,
             })
         } else {
@@ -133,6 +136,7 @@ export function TransactionDialog({
                 amount: Number(formData.amount),
                 type: formData.type,
                 date: formData.date,
+                payment_method: formData.payment_method,
                 category_id: formData.category_id || null,
             })
         }
@@ -145,7 +149,8 @@ export function TransactionDialog({
                     amount: "",
                     type: "expense",
                     category_id: "",
-                    date: new Date().toLocaleDateString('en-CA')
+                    date: new Date().toLocaleDateString('en-CA'),
+                    payment_method: "debit"
                 })
             }
             if (onSuccess) {
@@ -247,15 +252,35 @@ export function TransactionDialog({
                         />
                     </div>
 
-                    <div className="grid gap-2">
-                        <Label htmlFor="date">Data</Label>
-                        <Input
-                            id="date"
-                            type="date"
-                            value={formData.date}
-                            onChange={(e) => setFormData({ ...formData, date: e.target.value })}
-                            required
-                        />
+                    <div className="grid grid-cols-2 gap-4">
+                        <div className="grid gap-2">
+                            <Label htmlFor="date">Data</Label>
+                            <Input
+                                id="date"
+                                type="date"
+                                value={formData.date}
+                                onChange={(e) => setFormData({ ...formData, date: e.target.value })}
+                                required
+                            />
+                        </div>
+
+                        {formData.type === 'expense' && (
+                            <div className="grid gap-2">
+                                <Label htmlFor="payment_method">Forma de Pagamento</Label>
+                                <Select
+                                    value={formData.payment_method}
+                                    onValueChange={(val: "debit" | "credit") => setFormData({ ...formData, payment_method: val })}
+                                >
+                                    <SelectTrigger>
+                                        <SelectValue placeholder="Selecione" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem value="debit">Débito / PIX</SelectItem>
+                                        <SelectItem value="credit">Cartão de Crédito</SelectItem>
+                                    </SelectContent>
+                                </Select>
+                            </div>
+                        )}
                     </div>
 
                     <Button type="submit" disabled={loading} className="w-full">

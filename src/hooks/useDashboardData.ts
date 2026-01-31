@@ -14,6 +14,8 @@ export function useDashboardData(period: Period = 'current_month') {
         income: number
         expense: number
         creditInvoice: number
+        totalInvested: number
+        totalPatrimony: number
         recentTransactions: (Transaction & { categories: Category | null })[]
         categoryStats: { name: string; value: number; color: string }[]
     }>({
@@ -21,6 +23,8 @@ export function useDashboardData(period: Period = 'current_month') {
         income: 0,
         expense: 0,
         creditInvoice: 0,
+        totalInvested: 0,
+        totalPatrimony: 0,
         recentTransactions: [],
         categoryStats: []
     })
@@ -38,6 +42,8 @@ export function useDashboardData(period: Period = 'current_month') {
                         income: 4550.00,
                         expense: 2100.00,
                         creditInvoice: 850.00,
+                        totalInvested: 15400.00,
+                        totalPatrimony: 17850.00,
                         recentTransactions: [],
                         categoryStats: [
                             { name: 'Alimentação', value: 400, color: '#ef4444' },
@@ -50,20 +56,36 @@ export function useDashboardData(period: Period = 'current_month') {
                     return
                 }
 
-                const { data: allTransactions, error } = await supabase
-                    .from('transactions')
-                    .select('*, categories(*)')
-                    .order('date', { ascending: false })
+                // Fetch transactions and investments
+                const [transactionsRes, investmentsRes] = await Promise.all([
+                    supabase
+                        .from('transactions')
+                        .select('*, categories(*)')
+                        .order('date', { ascending: false }),
+                    supabase
+                        .from('investments')
+                        .select('*')
+                ])
 
-                if (error) throw error
-                const transactions = allTransactions || []
+                if (transactionsRes.error) throw transactionsRes.error
+                if (investmentsRes.error) throw investmentsRes.error
+
+                const transactions = transactionsRes.data || []
+                const investments = investmentsRes.data || []
+
+                // Calculate Investment Values
+                const totalInvested = investments.reduce((acc, inv) => {
+                    const price = inv.current_price || inv.average_price
+                    return acc + (inv.quantity * price)
+                }, 0)
 
                 // Calculate Lifetime Balance (Available Cash)
-                // income - debit_expenses
                 const lifetimeIncome = transactions.filter(t => t.type === 'income').reduce((acc, t) => acc + Number(t.amount), 0)
                 const lifetimeDebitExpense = transactions
                     .filter(t => t.type === 'expense' && t.payment_method === 'debit')
                     .reduce((acc, t) => acc + Number(t.amount), 0)
+
+                const balance = lifetimeIncome - lifetimeDebitExpense
 
                 // Define Period Range
                 let startDate = new Date(0)
@@ -117,10 +139,12 @@ export function useDashboardData(period: Period = 'current_month') {
                 }))
 
                 setData({
-                    balance: lifetimeIncome - lifetimeDebitExpense,
+                    balance: balance,
                     income,
                     expense,
                     creditInvoice,
+                    totalInvested,
+                    totalPatrimony: balance + totalInvested,
                     recentTransactions: periodTransactions.slice(0, 5),
                     categoryStats
                 })

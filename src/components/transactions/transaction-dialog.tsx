@@ -82,8 +82,9 @@ export function TransactionDialog({
             if (data) {
                 const hasVestuario = data.some(c => c.name.toLowerCase() === 'vestuário')
                 const hasEsporte = data.some(c => c.name.toLowerCase() === 'esporte')
+                const hasInvestimentos = data.some(c => c.name.toLowerCase() === 'investimentos')
 
-                if (data.length === 0 || !hasVestuario || !hasEsporte) {
+                if (data.length === 0 || !hasVestuario || !hasEsporte || !hasInvestimentos) {
                     await seedCategories()
                 } else {
                     setCategories(data)

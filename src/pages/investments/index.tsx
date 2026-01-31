@@ -150,7 +150,10 @@ export function InvestmentsPage() {
                                         <CardContent className="p-5 flex flex-col h-full">
                                             <div className="flex justify-between items-start mb-6">
                                                 <div className="min-w-0 flex-1">
-                                                    <h3 className="font-bold text-xl group-hover:text-primary transition-colors truncate tracking-tight">{inv.symbol || inv.name}</h3>
+                                                    <h3 className="font-bold text-xl group-hover:text-primary transition-colors truncate tracking-tight uppercase">{inv.symbol}</h3>
+                                                    {inv.name && (
+                                                        <p className="text-xs text-muted-foreground truncate group-hover:text-foreground/70 transition-colors">{inv.name}</p>
+                                                    )}
                                                 </div>
                                                 <div className="flex items-center">
                                                     <div className="flex opacity-0 group-hover:opacity-100 transition-all transform translate-x-1 group-hover:translate-x-0">

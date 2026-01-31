@@ -1,13 +1,12 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { cn } from "@/lib/utils"
 import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip } from "recharts"
-import { ArrowUpCircle, ArrowDownCircle, DollarSign, CalendarDays, CreditCard } from "lucide-react"
+import { ArrowUpCircle, ArrowDownCircle, DollarSign, Briefcase, TrendingUp, CreditCard } from "lucide-react"
 import { TransactionDialog } from "@/components/transactions/transaction-dialog"
 
 import { useNavigate } from "react-router-dom"
 import { useDashboardData } from "@/hooks/useDashboardData"
-import { supabase } from "@/lib/supabase"
-import { useState, useEffect } from "react"
+import { useState } from "react"
 import { PeriodFilter } from "@/components/ui/period-filter"
 import type { Period } from "@/components/ui/period-filter"
 import { motion } from "framer-motion"
@@ -32,15 +31,6 @@ export function Dashboard() {
     const navigate = useNavigate()
     const [period, setPeriod] = useState<Period>('current_month')
     const { data: dashboardData, loading } = useDashboardData(period)
-    const [subTotal, setSubTotal] = useState(0)
-
-    useEffect(() => {
-        const fetchSubs = async () => {
-            const { data } = await supabase.from('subscriptions').select('amount').eq('active', true)
-            if (data) setSubTotal(data.reduce((acc: number, s: { amount: number }) => acc + Number(s.amount), 0))
-        }
-        fetchSubs()
-    }, [])
 
     if (loading) {
         return (
@@ -50,7 +40,7 @@ export function Dashboard() {
         )
     }
 
-    const { balance, income, expense, creditInvoice, recentTransactions, categoryStats } = dashboardData
+    const { balance, income, expense, creditInvoice, totalInvested, totalPatrimony, recentTransactions, categoryStats } = dashboardData
 
     return (
         <div className="space-y-6">
@@ -74,29 +64,65 @@ export function Dashboard() {
                 variants={containerVariants}
                 initial="hidden"
                 animate="show"
-                className="grid gap-4 grid-cols-2 md:grid-cols-3 lg:grid-cols-5"
+                className="grid gap-4 grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-6"
             >
                 <motion.div variants={itemVariants} className="col-span-2 md:col-span-1">
                     <Card
-                        className="h-full cursor-pointer hover:shadow-md transition-all border-primary/20 bg-primary/5 active:scale-95"
-                        onClick={() => navigate('/transactions')}
+                        className="h-full cursor-pointer hover:shadow-md transition-all border-none bg-gradient-to-br from-primary/20 via-primary/10 to-transparent shadow-sm active:scale-95"
+                        onClick={() => navigate('/investments')}
                     >
                         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                            <CardTitle className="text-sm font-medium">Saldo em Conta</CardTitle>
-                            <DollarSign className="h-4 w-4 text-muted-foreground" />
+                            <CardTitle className="text-sm font-medium">Patrimônio Total</CardTitle>
+                            <Briefcase className="h-4 w-4 text-primary" />
                         </CardHeader>
                         <CardContent>
-                            <div className="text-2xl font-bold">
-                                <AnimatedNumber value={balance} />
+                            <div className="text-2xl font-bold text-primary">
+                                <AnimatedNumber value={totalPatrimony} />
                             </div>
-                            <p className="text-xs text-muted-foreground">Dinheiro disponível (Débito)</p>
+                            <p className="text-xs text-muted-foreground">Saldo + Investimentos</p>
                         </CardContent>
                     </Card>
                 </motion.div>
 
                 <motion.div variants={itemVariants}>
                     <Card
-                        className="h-full cursor-pointer hover:shadow-md transition-all hover:border-emerald-200 active:scale-95"
+                        className="h-full cursor-pointer hover:shadow-md transition-all bg-card shadow-sm border-primary/20 active:scale-95"
+                        onClick={() => navigate('/investments')}
+                    >
+                        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                            <CardTitle className="text-sm font-medium">Investimentos</CardTitle>
+                            <TrendingUp className="h-4 w-4 text-muted-foreground" />
+                        </CardHeader>
+                        <CardContent>
+                            <div className="text-2xl font-bold">
+                                <AnimatedNumber value={totalInvested} />
+                            </div>
+                            <p className="text-xs text-muted-foreground">Valor atual de mercado</p>
+                        </CardContent>
+                    </Card>
+                </motion.div>
+
+                <motion.div variants={itemVariants}>
+                    <Card
+                        className="h-full cursor-pointer hover:shadow-md transition-all active:scale-95 shadow-sm"
+                        onClick={() => navigate('/transactions')}
+                    >
+                        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                            <CardTitle className="text-sm font-medium">Saldo (Débito)</CardTitle>
+                            <DollarSign className="h-4 w-4 text-muted-foreground" />
+                        </CardHeader>
+                        <CardContent>
+                            <div className="text-2xl font-bold">
+                                <AnimatedNumber value={balance} />
+                            </div>
+                            <p className="text-xs text-muted-foreground">Dinheiro disponível</p>
+                        </CardContent>
+                    </Card>
+                </motion.div>
+
+                <motion.div variants={itemVariants}>
+                    <Card
+                        className="h-full cursor-pointer hover:shadow-md transition-all hover:border-emerald-200 active:scale-95 shadow-sm"
                         onClick={() => navigate('/transactions?type=income')}
                     >
                         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -114,7 +140,7 @@ export function Dashboard() {
 
                 <motion.div variants={itemVariants}>
                     <Card
-                        className="h-full cursor-pointer hover:shadow-md transition-all hover:border-rose-200 active:scale-95"
+                        className="h-full cursor-pointer hover:shadow-md transition-all hover:border-rose-200 active:scale-95 shadow-sm"
                         onClick={() => navigate('/transactions?type=expense')}
                     >
                         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -132,36 +158,18 @@ export function Dashboard() {
 
                 <motion.div variants={itemVariants}>
                     <Card
-                        className="h-full border-orange-200 bg-orange-50/30 cursor-pointer hover:shadow-md transition-all hover:border-orange-400 active:scale-95"
+                        className="h-full border-orange-200 bg-orange-50/10 cursor-pointer hover:shadow-md transition-all hover:border-orange-400 active:scale-95 shadow-sm"
                         onClick={() => navigate('/transactions?method=credit')}
                     >
                         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                            <CardTitle className="text-sm font-medium">Fatura (Crédito)</CardTitle>
+                            <CardTitle className="text-sm font-medium">Fatura</CardTitle>
                             <CreditCard className="h-4 w-4 text-orange-500" />
                         </CardHeader>
                         <CardContent>
                             <div className="text-2xl font-bold text-orange-600">
                                 <AnimatedNumber value={creditInvoice} />
                             </div>
-                            <p className="text-xs text-muted-foreground">Gasto pendente no cartão</p>
-                        </CardContent>
-                    </Card>
-                </motion.div>
-
-                <motion.div variants={itemVariants}>
-                    <Card
-                        className="h-full cursor-pointer hover:shadow-md transition-all hover:border-primary/40 active:scale-95"
-                        onClick={() => navigate('/subscriptions')}
-                    >
-                        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                            <CardTitle className="text-sm font-medium">Assinaturas</CardTitle>
-                            <CalendarDays className="h-4 w-4 text-primary" />
-                        </CardHeader>
-                        <CardContent>
-                            <div className="text-2xl font-bold text-primary">
-                                <AnimatedNumber value={subTotal} />
-                            </div>
-                            <p className="text-xs text-muted-foreground">Custo fixo mensal ativo</p>
+                            <p className="text-xs text-muted-foreground">Gastos no crédito</p>
                         </CardContent>
                     </Card>
                 </motion.div>

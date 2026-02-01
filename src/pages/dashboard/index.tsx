@@ -40,7 +40,7 @@ export function Dashboard() {
         )
     }
 
-    const { balance, income, expense, creditInvoice, totalInvested, totalPatrimony, recentTransactions, categoryStats } = dashboardData
+    const { balance, income, expense, creditInvoice, totalInvested, totalPatrimony, creditCycleLabel, recentTransactions, categoryStats } = dashboardData
 
     return (
         <div className="space-y-6">
@@ -64,9 +64,9 @@ export function Dashboard() {
                 variants={containerVariants}
                 initial="hidden"
                 animate="show"
-                className="grid gap-4 grid-cols-2 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-6"
+                className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6"
             >
-                <motion.div variants={itemVariants} className="col-span-2 md:col-span-1">
+                <motion.div variants={itemVariants} className="sm:col-span-2 lg:col-span-1">
                     <Card
                         className="h-full cursor-pointer hover:shadow-md transition-all border-none bg-gradient-to-br from-primary/20 via-primary/10 to-transparent shadow-sm active:scale-95"
                         onClick={() => navigate('/investments')}
@@ -76,7 +76,7 @@ export function Dashboard() {
                             <Briefcase className="h-4 w-4 text-primary" />
                         </CardHeader>
                         <CardContent>
-                            <div className="text-2xl font-bold text-primary">
+                            <div className="text-xl md:text-2xl font-bold text-primary truncate">
                                 <AnimatedNumber value={totalPatrimony} />
                             </div>
                             <p className="text-xs text-muted-foreground">Saldo + Investimentos</p>
@@ -94,7 +94,7 @@ export function Dashboard() {
                             <TrendingUp className="h-4 w-4 text-muted-foreground" />
                         </CardHeader>
                         <CardContent>
-                            <div className="text-2xl font-bold">
+                            <div className="text-xl md:text-2xl font-bold truncate">
                                 <AnimatedNumber value={totalInvested} />
                             </div>
                             <p className="text-xs text-muted-foreground">Valor atual de mercado</p>
@@ -112,7 +112,7 @@ export function Dashboard() {
                             <DollarSign className="h-4 w-4 text-muted-foreground" />
                         </CardHeader>
                         <CardContent>
-                            <div className="text-2xl font-bold">
+                            <div className="text-xl md:text-2xl font-bold truncate">
                                 <AnimatedNumber value={balance} />
                             </div>
                             <p className="text-xs text-muted-foreground">Dinheiro disponível</p>
@@ -130,7 +130,7 @@ export function Dashboard() {
                             <ArrowUpCircle className="h-4 w-4 text-emerald-500" />
                         </CardHeader>
                         <CardContent>
-                            <div className="text-2xl font-bold text-emerald-500">
+                            <div className="text-xl md:text-2xl font-bold text-emerald-500 truncate">
                                 <AnimatedNumber value={income} />
                             </div>
                             <p className="text-xs text-muted-foreground">Entradas no período</p>
@@ -148,7 +148,7 @@ export function Dashboard() {
                             <ArrowDownCircle className="h-4 w-4 text-rose-500" />
                         </CardHeader>
                         <CardContent>
-                            <div className="text-2xl font-bold text-rose-500">
+                            <div className="text-xl md:text-2xl font-bold text-rose-500 truncate">
                                 <AnimatedNumber value={expense} />
                             </div>
                             <p className="text-xs text-muted-foreground">Saídas no período</p>
@@ -166,10 +166,12 @@ export function Dashboard() {
                             <CreditCard className="h-4 w-4 text-orange-500" />
                         </CardHeader>
                         <CardContent>
-                            <div className="text-2xl font-bold text-orange-600">
+                            <div className="text-xl md:text-2xl font-bold text-orange-600 truncate">
                                 <AnimatedNumber value={creditInvoice} />
                             </div>
-                            <p className="text-xs text-muted-foreground">Gastos no crédito</p>
+                            <p className="text-xs text-muted-foreground">
+                                {creditCycleLabel ? `Ciclo: ${creditCycleLabel}` : 'Gastos no crédito'}
+                            </p>
                         </CardContent>
                     </Card>
                 </motion.div>

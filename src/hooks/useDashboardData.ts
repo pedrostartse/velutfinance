@@ -16,6 +16,7 @@ export function useDashboardData(period: Period = 'current_month') {
         creditInvoice: number
         totalInvested: number
         totalPatrimony: number
+        creditCycleLabel?: string
         recentTransactions: (Transaction & { categories: Category | null })[]
         categoryStats: { name: string; value: number; color: string }[]
     }>({
@@ -25,6 +26,7 @@ export function useDashboardData(period: Period = 'current_month') {
         creditInvoice: 0,
         totalInvested: 0,
         totalPatrimony: 0,
+        creditCycleLabel: '',
         recentTransactions: [],
         categoryStats: []
     })
@@ -118,9 +120,47 @@ export function useDashboardData(period: Period = 'current_month') {
                     .filter(t => t.type === 'expense')
                     .reduce((acc, t) => acc + Number(t.amount), 0)
 
-                // Only Credit Expenses in the period
-                const creditInvoice = periodTransactions
-                    .filter(t => t.type === 'expense' && t.payment_method === 'credit')
+                // Specialized Credit Invoice Calculation (Closes on the 18th)
+                let creditStartDateCredit = new Date(startDate)
+                let creditEndDateCredit = new Date(endDate)
+                let creditCycleLabel = ''
+
+                if (period === 'current_month') {
+                    const today = new Date()
+                    // If before the 18th, the current invoice started on the 19th of last month
+                    // If after the 18th, the current invoice started on the 19th of this month
+                    // However, the user wants "current month" to usually mean the invoice that ends in this month.
+                    // Let's standardise: Invoice of "Month X" = 19th of Month X-1 to 18th of Month X.
+
+                    const currentMonth = today.getMonth()
+                    const currentYear = today.getFullYear()
+
+                    creditStartDateCredit = new Date(currentYear, currentMonth - 1, 19)
+                    creditEndDateCredit = new Date(currentYear, currentMonth, 18, 23, 59, 59)
+
+                    const startLabel = creditStartDateCredit.toLocaleDateString('pt-BR', { day: '2-digit', month: 'short' })
+                    const endLabel = creditEndDateCredit.toLocaleDateString('pt-BR', { day: '2-digit', month: 'short' })
+                    creditCycleLabel = `${startLabel} - ${endLabel}`
+                } else if (period === 'last_month') {
+                    const lastMonth = subMonths(new Date(), 1)
+                    const m = lastMonth.getMonth()
+                    const y = lastMonth.getFullYear()
+
+                    creditStartDateCredit = new Date(y, m - 1, 19)
+                    creditEndDateCredit = new Date(y, m, 18, 23, 59, 59)
+
+                    const startLabel = creditStartDateCredit.toLocaleDateString('pt-BR', { day: '2-digit', month: 'short' })
+                    const endLabel = creditEndDateCredit.toLocaleDateString('pt-BR', { day: '2-digit', month: 'short' })
+                    creditCycleLabel = `${startLabel} - ${endLabel}`
+                }
+
+                const creditInvoice = transactions
+                    .filter(t => {
+                        if (t.type !== 'expense' || t.payment_method !== 'credit') return false
+                        const tDate = new Date(t.date + 'T12:00:00')
+                        if (period === 'all') return true
+                        return isWithinInterval(tDate, { start: creditStartDateCredit, end: creditEndDateCredit })
+                    })
                     .reduce((acc, t) => acc + Number(t.amount), 0)
 
                 const statsMap = new Map<string, number>()
@@ -145,6 +185,7 @@ export function useDashboardData(period: Period = 'current_month') {
                     creditInvoice,
                     totalInvested,
                     totalPatrimony: balance + totalInvested,
+                    creditCycleLabel,
                     recentTransactions: periodTransactions.slice(0, 5),
                     categoryStats
                 })

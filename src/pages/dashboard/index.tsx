@@ -1,8 +1,9 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { cn } from "@/lib/utils"
 import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip } from "recharts"
-import { ArrowUpCircle, ArrowDownCircle, DollarSign, Briefcase, TrendingUp, CreditCard } from "lucide-react"
+import { ArrowUpCircle, ArrowDownCircle, DollarSign, Briefcase, TrendingUp, CreditCard, Sparkles, Plus, ArrowRight } from "lucide-react"
 import { TransactionDialog } from "@/components/transactions/transaction-dialog"
+import { Button } from "@/components/ui/button"
 
 import { useNavigate } from "react-router-dom"
 import { useDashboardData } from "@/hooks/useDashboardData"
@@ -42,6 +43,8 @@ export function Dashboard() {
 
     const { balance, income, expense, creditInvoice, totalInvested, totalPatrimony, creditCycleLabel, recentTransactions, categoryStats } = dashboardData
 
+    const isNewUser = recentTransactions.length === 0 && balance === 0 && totalInvested === 0
+
     return (
         <div className="space-y-6">
             <motion.div
@@ -58,6 +61,43 @@ export function Dashboard() {
                     <TransactionDialog />
                 </div>
             </motion.div>
+
+            {isNewUser && (
+                <motion.div
+                    initial={{ opacity: 0, scale: 0.95 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    className="relative overflow-hidden rounded-xl border bg-gradient-to-r from-primary/10 via-primary/5 to-background p-6 md:p-8"
+                >
+                    <div className="relative z-10 flex flex-col md:flex-row items-center gap-6">
+                        <div className="flex h-16 w-16 items-center justify-center rounded-full bg-primary/20 text-primary shrink-0">
+                            <Sparkles className="h-8 w-8" />
+                        </div>
+                        <div className="flex-1 text-center md:text-left space-y-2">
+                            <h2 className="text-xl md:text-2xl font-bold">Olá! Vamos começar sua jornada financeira?</h2>
+                            <p className="text-muted-foreground text-sm max-w-2xl">
+                                Parece que você ainda não registrou nada. Que tal começar adicionando sua primeira transação ou cadastrando seus investimentos para ter uma visão clara do seu patrimônio?
+                            </p>
+                            <div className="pt-4 flex flex-wrap justify-center md:justify-start gap-4">
+                                <TransactionDialog
+                                    trigger={
+                                        <Button className="gap-2 shadow-lg shadow-primary/20">
+                                            <Plus className="h-4 w-4" />
+                                            Primeira Transação
+                                        </Button>
+                                    }
+                                />
+                                <Button variant="outline" className="gap-2" onClick={() => navigate('/investments')}>
+                                    Ver Investimentos
+                                    <ArrowRight className="h-4 w-4" />
+                                </Button>
+                            </div>
+                        </div>
+                    </div>
+                    {/* Visual sugar */}
+                    <div className="absolute top-[-20%] right-[-5%] h-64 w-64 bg-primary/5 rounded-full blur-3xl" />
+                    <div className="absolute bottom-[-20%] left-[-5%] h-64 w-64 bg-primary/3 rounded-full blur-3xl" />
+                </motion.div>
+            )}
 
             {/* Summary Cards */}
             <motion.div

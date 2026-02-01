@@ -1,10 +1,8 @@
 import { Link, useLocation } from "react-router-dom"
-import { LayoutDashboard, Wallet, Target, LogOut, PieChart, CalendarDays, TrendingUp } from "lucide-react"
+import { LayoutDashboard, Wallet, Target, PieChart, CalendarDays, TrendingUp, User } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
-
-import { useNavigate } from "react-router-dom"
-import { supabase } from "@/lib/supabase"
+import { ProfileDialog } from "./profile-dialog"
 
 const navItems = [
     { name: "Dashboard", href: "/", icon: LayoutDashboard },
@@ -16,12 +14,6 @@ const navItems = [
 
 export function Sidebar() {
     const location = useLocation()
-    const navigate = useNavigate()
-
-    const handleLogout = async () => {
-        await supabase.auth.signOut()
-        navigate("/login")
-    }
 
     return (
         <div className="flex h-screen w-64 flex-col border-r bg-card py-6">
@@ -47,15 +39,24 @@ export function Sidebar() {
                     ))}
                 </nav>
 
-                <div className="mt-4 pt-4 border-t">
-                    <Button
-                        variant="ghost"
-                        className="w-full justify-start gap-2 text-muted-foreground hover:text-destructive hover:bg-destructive/10 h-10 px-3"
-                        onClick={handleLogout}
-                    >
-                        <LogOut className="h-4 w-4" />
-                        Sair
-                    </Button>
+                <div className="mt-auto pt-4 border-t space-y-4">
+                    <ProfileDialog
+                        showLogout
+                        trigger={
+                            <Button
+                                variant="ghost"
+                                className="w-full justify-start gap-3 text-muted-foreground hover:text-foreground h-12 px-3 transition-colors bg-muted/20 border border-transparent hover:border-border"
+                            >
+                                <div className="h-7 w-7 rounded-full bg-primary/10 flex items-center justify-center text-primary">
+                                    <User className="h-4 w-4" />
+                                </div>
+                                <div className="flex flex-col items-start overflow-hidden">
+                                    <span className="text-sm font-semibold truncate w-full text-left">Minha Conta</span>
+                                    <span className="text-[10px] text-muted-foreground uppercase tracking-widest">Ver Perfil</span>
+                                </div>
+                            </Button>
+                        }
+                    />
                 </div>
             </div>
         </div>

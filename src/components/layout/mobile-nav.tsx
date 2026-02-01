@@ -1,9 +1,9 @@
 import { Link, useLocation } from "react-router-dom"
-import { LayoutDashboard, Wallet, Target, Plus, CalendarDays, TrendingUp, LogOut } from "lucide-react"
+import { LayoutDashboard, Wallet, Target, Plus, CalendarDays, TrendingUp, User } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { motion } from "framer-motion"
 import { TransactionDialog } from "../transactions/transaction-dialog"
-import { supabase } from "@/lib/supabase"
+import { ProfileDialog } from "./profile-dialog"
 
 const navItemsStart = [
     { name: "Home", href: "/", icon: LayoutDashboard },
@@ -19,16 +19,10 @@ const navItemsEnd = [
 export function MobileNav() {
     const location = useLocation()
 
-    const handleLogout = async () => {
-        if (confirm('Deseja realmente sair?')) {
-            await supabase.auth.signOut()
-        }
-    }
-
     const NavLink = ({ item }: { item: typeof navItemsStart[0] }) => {
         const isActive = location.pathname === item.href
         return (
-            <Link to={item.href} className="flex flex-col items-center gap-1 relative min-w-0">
+            <Link to={item.href} className="flex flex-col items-center gap-1 relative min-w-0 flex-1">
                 <div
                     className={cn(
                         "rounded-full p-2 transition-colors",
@@ -50,11 +44,13 @@ export function MobileNav() {
     return (
         <div className="fixed bottom-0 left-0 right-0 border-t bg-card/80 backdrop-blur-xl px-2 py-3 pb-6 md:hidden z-50">
             <div className="flex items-center justify-between relative max-w-lg mx-auto w-full px-1">
-                {navItemsStart.map((item) => (
-                    <NavLink key={item.href} item={item} />
-                ))}
+                <div className="flex flex-1 justify-around">
+                    {navItemsStart.map((item) => (
+                        <NavLink key={item.href} item={item} />
+                    ))}
+                </div>
 
-                <div className="flex justify-center relative scale-110 -top-5 mx-1">
+                <div className="flex justify-center relative scale-110 -top-5 mx-4">
                     <TransactionDialog
                         trigger={
                             <button
@@ -67,16 +63,20 @@ export function MobileNav() {
                     />
                 </div>
 
-                {navItemsEnd.map((item) => (
-                    <NavLink key={item.href} item={item} />
-                ))}
+                <div className="flex flex-1 justify-around items-center">
+                    {navItemsEnd.map((item) => (
+                        <NavLink key={item.href} item={item} />
+                    ))}
 
-                <button
-                    onClick={handleLogout}
-                    className="flex flex-col items-center gap-1 p-2 text-muted-foreground hover:text-destructive transition-colors"
-                >
-                    <LogOut className="h-5 w-5" />
-                </button>
+                    <ProfileDialog
+                        showLogout
+                        trigger={
+                            <button className="flex flex-col items-center gap-1 p-2 text-muted-foreground hover:text-primary transition-colors flex-1">
+                                <User className="h-5 w-5" />
+                            </button>
+                        }
+                    />
+                </div>
             </div>
         </div>
     )

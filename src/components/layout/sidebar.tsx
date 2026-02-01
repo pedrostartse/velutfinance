@@ -37,27 +37,20 @@ export function Sidebar() {
                             </Button>
                         </Link>
                     ))}
-                </nav>
 
-                <div className="mt-auto pt-4 border-t space-y-4">
                     <ProfileDialog
                         showLogout
                         trigger={
                             <Button
                                 variant="ghost"
-                                className="w-full justify-start gap-3 text-muted-foreground hover:text-foreground h-12 px-3 transition-colors bg-muted/20 border border-transparent hover:border-border"
+                                className="w-full justify-start gap-2 h-10 px-3 text-muted-foreground hover:text-foreground transition-colors"
                             >
-                                <div className="h-7 w-7 rounded-full bg-primary/10 flex items-center justify-center text-primary">
-                                    <User className="h-4 w-4" />
-                                </div>
-                                <div className="flex flex-col items-start overflow-hidden">
-                                    <span className="text-sm font-semibold truncate w-full text-left">Minha Conta</span>
-                                    <span className="text-[10px] text-muted-foreground uppercase tracking-widest">Ver Perfil</span>
-                                </div>
+                                <User className="h-4 w-4" />
+                                Minha Conta
                             </Button>
                         }
                     />
-                </div>
+                </nav>
             </div>
         </div>
     )

@@ -80,62 +80,10 @@ export function TransactionDialog({
 
             if (error) throw error
             if (data) {
-                const hasVestuario = data.some(c => c.name.toLowerCase() === 'vestuário')
-                const hasEsporte = data.some(c => c.name.toLowerCase() === 'esporte')
-                const hasInvestimentos = data.some(c => c.name.toLowerCase() === 'investimentos')
-
-                if (data.length === 0 || !hasVestuario || !hasEsporte || !hasInvestimentos) {
-                    await seedCategories()
-                } else {
-                    setCategories(data)
-                }
+                setCategories(data)
             }
         } catch (error) {
             console.error("Error fetching categories:", error)
-        } finally {
-            setFetchingCategories(false)
-        }
-    }
-
-    const seedCategories = async () => {
-        try {
-            setFetchingCategories(true)
-            const { data: { user } } = await supabase.auth.getUser()
-            if (!user) return
-
-            // Fetch existing categories to avoid duplicates
-            const { data: existing } = await supabase
-                .from('categories')
-                .select('name')
-                .eq('user_id', user.id)
-
-            const existingNames = new Set(existing?.map(c => c.name.toLowerCase()) || [])
-
-            const defaultCategories = [
-                { name: 'Alimentação', type: 'expense', user_id: user.id },
-                { name: 'Transporte', type: 'expense', user_id: user.id },
-                { name: 'Lazer', type: 'expense', user_id: user.id },
-                { name: 'Moradia', type: 'expense', user_id: user.id },
-                { name: 'Saúde', type: 'expense', user_id: user.id },
-                { name: 'Educação', type: 'expense', user_id: user.id },
-                { name: 'Vestuário', type: 'expense', user_id: user.id },
-                { name: 'Esporte', type: 'expense', user_id: user.id },
-                { name: 'Salário', type: 'income', user_id: user.id },
-                { name: 'Investimentos', type: 'income', user_id: user.id },
-                { name: 'Investimentos', type: 'expense', user_id: user.id },
-                { name: 'Outros', type: 'income', user_id: user.id },
-            ]
-
-            const toInsert = defaultCategories.filter(cat => !existingNames.has(cat.name.toLowerCase()))
-
-            if (toInsert.length > 0) {
-                const { error } = await supabase.from('categories').insert(toInsert)
-                if (error) throw error
-            }
-
-            await fetchCategories()
-        } catch (error) {
-            console.error("Error seeding categories:", error)
         } finally {
             setFetchingCategories(false)
         }
@@ -224,34 +172,28 @@ export function TransactionDialog({
                         </div>
                         <div className="grid gap-2">
                             <Label htmlFor="category">Categoria</Label>
-                            {filteredCategories.length === 0 && !fetchingCategories ? (
-                                <Button
-                                    type="button"
-                                    variant="outline"
-                                    size="sm"
-                                    className="h-10 text-xs border-dashed"
-                                    onClick={seedCategories}
-                                >
-                                    Criar padrões
-                                </Button>
-                            ) : (
-                                <Select
-                                    value={formData.category_id ?? undefined}
-                                    onValueChange={(val) => setFormData({ ...formData, category_id: val })}
-                                    disabled={fetchingCategories}
-                                >
-                                    <SelectTrigger>
-                                        <SelectValue placeholder={fetchingCategories ? "Carregando..." : "Selecione"} />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        {filteredCategories.map((cat) => (
+                            <Select
+                                value={formData.category_id ?? undefined}
+                                onValueChange={(val) => setFormData({ ...formData, category_id: val })}
+                                disabled={fetchingCategories}
+                            >
+                                <SelectTrigger>
+                                    <SelectValue placeholder={fetchingCategories ? "Carregando..." : "Selecione"} />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    {filteredCategories.length === 0 && !fetchingCategories ? (
+                                        <div className="p-2 text-xs text-muted-foreground text-center italic">
+                                            Nenhuma categoria encontrada
+                                        </div>
+                                    ) : (
+                                        filteredCategories.map((cat) => (
                                             <SelectItem key={cat.id} value={cat.id}>
                                                 {cat.name}
                                             </SelectItem>
-                                        ))}
-                                    </SelectContent>
-                                </Select>
-                            )}
+                                        ))
+                                    )}
+                                </SelectContent>
+                            </Select>
                         </div>
                     </div>
 

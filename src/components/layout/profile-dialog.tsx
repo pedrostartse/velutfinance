@@ -10,7 +10,9 @@ import {
 } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import { useNavigate } from "react-router-dom"
-import { User, Copy, Check, Mail, Shield, LogOut } from "lucide-react"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { User, Copy, Check, Mail, Shield, LogOut, CalendarClock, CreditCard } from "lucide-react"
 
 interface ProfileDialogProps {
     trigger: React.ReactNode
@@ -21,14 +23,59 @@ export function ProfileDialog({ trigger, showLogout }: ProfileDialogProps) {
     const navigate = useNavigate()
     const [user, setUser] = useState<{ email?: string; id: string } | null>(null)
     const [copied, setCopied] = useState(false)
+    const [closingDay, setClosingDay] = useState<string>("18")
+    const [savingSettings, setSavingSettings] = useState(false)
 
     useEffect(() => {
-        supabase.auth.getUser().then(({ data: { user } }) => {
+        async function loadProfile() {
+            const { data: { user } } = await supabase.auth.getUser()
             if (user) {
                 setUser({ email: user.email, id: user.id })
+
+                // Load settings
+                const { data: settings } = await supabase
+                    .from('user_settings')
+                    .select('card_closing_day')
+                    .eq('user_id', user.id)
+                    .single()
+
+                if (settings) {
+                    setClosingDay(settings.card_closing_day.toString())
+                }
             }
-        })
+        }
+        loadProfile()
     }, [])
+
+    const handleSaveSettings = async () => {
+        if (!user) return
+
+        const day = parseInt(closingDay)
+        if (isNaN(day) || day < 1 || day > 31) {
+            alert("Por favor, insira um dia válido (1-31)")
+            return
+        }
+
+        try {
+            setSavingSettings(true)
+            const { error } = await supabase
+                .from('user_settings')
+                .upsert({
+                    user_id: user.id,
+                    card_closing_day: day,
+                    updated_at: new Date().toISOString()
+                })
+
+            if (error) throw error
+
+            // Optional: Show success feedback?
+        } catch (error) {
+            console.error('Error saving settings:', error)
+            alert('Erro ao salvar configurações')
+        } finally {
+            setSavingSettings(false)
+        }
+    }
 
     const handleLogout = async () => {
         if (confirm('Deseja realmente sair?')) {
@@ -89,6 +136,40 @@ export function ProfileDialog({ trigger, showLogout }: ProfileDialogProps) {
                                     </Button>
                                 </div>
                             </div>
+                        </div>
+                    </div>
+
+                    <div className="space-y-4">
+                        <div className="flex items-center gap-2 pb-2 border-b">
+                            <CreditCard className="h-4 w-4 text-primary" />
+                            <h3 className="text-sm font-semibold">Configurações do Cartão</h3>
+                        </div>
+
+                        <div className="grid gap-2">
+                            <Label htmlFor="closingDay">Dia de Fechamento da Fatura</Label>
+                            <div className="flex gap-2">
+                                <div className="relative flex-1">
+                                    <CalendarClock className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+                                    <Input
+                                        id="closingDay"
+                                        type="number"
+                                        min={1}
+                                        max={31}
+                                        className="pl-9"
+                                        value={closingDay}
+                                        onChange={(e) => setClosingDay(e.target.value)}
+                                    />
+                                </div>
+                                <Button
+                                    onClick={handleSaveSettings}
+                                    disabled={savingSettings}
+                                >
+                                    {savingSettings ? "Salvando..." : "Salvar"}
+                                </Button>
+                            </div>
+                            <p className="text-[11px] text-muted-foreground">
+                                O ciclo da fatura será calculado com base neste dia.
+                            </p>
                         </div>
                     </div>
 

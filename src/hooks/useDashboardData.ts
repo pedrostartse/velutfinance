@@ -58,15 +58,20 @@ export function useDashboardData(period: Period = 'current_month') {
                     return
                 }
 
-                // Fetch transactions and investments
-                const [transactionsRes, investmentsRes] = await Promise.all([
+                // Fetch transactions, investments AND user settings
+                const [transactionsRes, investmentsRes, settingsRes] = await Promise.all([
                     supabase
                         .from('transactions')
                         .select('*, categories(*)')
                         .order('date', { ascending: false }),
                     supabase
                         .from('investments')
-                        .select('*')
+                        .select('*'),
+                    supabase
+                        .from('user_settings')
+                        .select('card_closing_day')
+                        .eq('user_id', session.user.id)
+                        .single()
                 ])
 
                 if (transactionsRes.error) throw transactionsRes.error
@@ -74,6 +79,7 @@ export function useDashboardData(period: Period = 'current_month') {
 
                 const transactions = transactionsRes.data || []
                 const investments = investmentsRes.data || []
+                const closingDay = settingsRes.data?.card_closing_day || 18
 
                 // Calculate Investment Values
                 const totalInvested = investments.reduce((acc, inv) => {
@@ -120,23 +126,22 @@ export function useDashboardData(period: Period = 'current_month') {
                     .filter(t => t.type === 'expense')
                     .reduce((acc, t) => acc + Number(t.amount), 0)
 
-                // Specialized Credit Invoice Calculation (Closes on the 18th)
+                // Specialized Credit Invoice Calculation (Dynamic Closing Day)
                 let creditStartDateCredit = new Date(startDate)
                 let creditEndDateCredit = new Date(endDate)
                 let creditCycleLabel = ''
 
                 if (period === 'current_month') {
                     const today = new Date()
-                    // If before the 18th, the current invoice started on the 19th of last month
-                    // If after the 18th, the current invoice started on the 19th of this month
-                    // However, the user wants "current month" to usually mean the invoice that ends in this month.
-                    // Let's standardise: Invoice of "Month X" = 19th of Month X-1 to 18th of Month X.
-
                     const currentMonth = today.getMonth()
                     const currentYear = today.getFullYear()
 
-                    creditStartDateCredit = new Date(currentYear, currentMonth - 1, 19)
-                    creditEndDateCredit = new Date(currentYear, currentMonth, 18, 23, 59, 59)
+                    // Invoice ending in this month:
+                    // Starts: (ClosingDay + 1) of Prev Month
+                    // Ends: ClosingDay of This Month
+
+                    creditStartDateCredit = new Date(currentYear, currentMonth - 1, closingDay + 1)
+                    creditEndDateCredit = new Date(currentYear, currentMonth, closingDay, 23, 59, 59)
 
                     const startLabel = creditStartDateCredit.toLocaleDateString('pt-BR', { day: '2-digit', month: 'short' })
                     const endLabel = creditEndDateCredit.toLocaleDateString('pt-BR', { day: '2-digit', month: 'short' })
@@ -146,8 +151,8 @@ export function useDashboardData(period: Period = 'current_month') {
                     const m = lastMonth.getMonth()
                     const y = lastMonth.getFullYear()
 
-                    creditStartDateCredit = new Date(y, m - 1, 19)
-                    creditEndDateCredit = new Date(y, m, 18, 23, 59, 59)
+                    creditStartDateCredit = new Date(y, m - 1, closingDay + 1)
+                    creditEndDateCredit = new Date(y, m, closingDay, 23, 59, 59)
 
                     const startLabel = creditStartDateCredit.toLocaleDateString('pt-BR', { day: '2-digit', month: 'short' })
                     const endLabel = creditEndDateCredit.toLocaleDateString('pt-BR', { day: '2-digit', month: 'short' })

@@ -137,6 +137,26 @@ export interface Database {
                     created_at?: string
                 }
             }
+            user_settings: {
+                Row: {
+                    user_id: string
+                    card_closing_day: number
+                    created_at: string
+                    updated_at: string
+                }
+                Insert: {
+                    user_id: string
+                    card_closing_day?: number
+                    created_at?: string
+                    updated_at?: string
+                }
+                Update: {
+                    user_id?: string
+                    card_closing_day?: number
+                    created_at?: string
+                    updated_at?: string
+                }
+            }
         }
     }
 }

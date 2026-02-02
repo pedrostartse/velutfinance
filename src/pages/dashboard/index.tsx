@@ -104,114 +104,135 @@ export function Dashboard() {
                 variants={containerVariants}
                 initial="hidden"
                 animate="show"
-                className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6"
+                className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-4"
             >
-                <motion.div variants={itemVariants} className="sm:col-span-2 lg:col-span-1">
+                {/* HERO CARD: Saldo */}
+                <motion.div variants={itemVariants} className="sm:col-span-2 row-span-2">
                     <Card
-                        className="h-full cursor-pointer hover:shadow-md transition-all border-none bg-gradient-to-br from-primary/20 via-primary/10 to-transparent shadow-sm active:scale-95"
+                        className="h-full cursor-pointer transition-all border-none bg-gradient-to-br from-blue-600 to-indigo-600 shadow-xl active:scale-95 group relative overflow-hidden"
+                        onClick={() => navigate('/transactions')}
+                    >
+                        <div className="absolute top-0 right-0 p-32 bg-white/5 rounded-full blur-3xl -mr-16 -mt-16 pointer-events-none" />
+                        <div className="absolute bottom-0 left-0 p-24 bg-black/10 rounded-full blur-2xl -ml-10 -mb-10 pointer-events-none" />
+
+                        <CardHeader className="relative z-10 flex flex-row items-center justify-between space-y-0 pb-2">
+                            <CardTitle className="text-lg font-medium text-white/90">Saldo Disponível</CardTitle>
+                            <div className="p-2 bg-white/20 rounded-full backdrop-blur-sm">
+                                <DollarSign className="h-5 w-5 text-white" />
+                            </div>
+                        </CardHeader>
+                        <CardContent className="relative z-10 pt-4">
+                            <div className="text-4xl md:text-5xl font-bold text-white tracking-tight">
+                                <AnimatedNumber value={balance} />
+                            </div>
+                            <p className="text-blue-100 mt-2 text-sm font-medium opacity-90">
+                                Dinheiro em conta
+                            </p>
+                            <div className="mt-8 flex gap-3">
+                                <Button variant="secondary" size="sm" className="bg-white/10 hover:bg-white/20 text-white border-0 backdrop-blur-md" onClick={(e) => { e.stopPropagation(); navigate('/transactions?type=income'); }}>
+                                    <ArrowUpCircle className="mr-2 h-4 w-4" />
+                                    Receita
+                                </Button>
+                                <Button variant="secondary" size="sm" className="bg-white/10 hover:bg-white/20 text-white border-0 backdrop-blur-md" onClick={(e) => { e.stopPropagation(); navigate('/transactions?type=expense'); }}>
+                                    <ArrowDownCircle className="mr-2 h-4 w-4" />
+                                    Despesa
+                                </Button>
+                            </div>
+                        </CardContent>
+                    </Card>
+                </motion.div>
+
+                <motion.div variants={itemVariants} className="sm:col-span-1">
+                    <Card
+                        className="h-full glass-card cursor-pointer hover:shadow-lg transition-all border-white/5 active:scale-95"
                         onClick={() => navigate('/investments')}
                     >
                         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                            <CardTitle className="text-sm font-medium">Patrimônio Total</CardTitle>
+                            <CardTitle className="text-sm font-medium text-muted-foreground">Patrimônio</CardTitle>
                             <Briefcase className="h-4 w-4 text-primary" />
                         </CardHeader>
                         <CardContent>
-                            <div className="text-xl md:text-2xl font-bold text-primary truncate">
+                            <div className="text-2xl font-bold text-foreground truncate">
                                 <AnimatedNumber value={totalPatrimony} />
                             </div>
-                            <p className="text-xs text-muted-foreground">Saldo + Investimentos</p>
                         </CardContent>
                     </Card>
                 </motion.div>
 
-                <motion.div variants={itemVariants}>
+                <motion.div variants={itemVariants} className="sm:col-span-1">
                     <Card
-                        className="h-full cursor-pointer hover:shadow-md transition-all bg-card shadow-sm border-primary/20 active:scale-95"
+                        className="h-full glass-card cursor-pointer hover:shadow-lg transition-all active:scale-95 border-white/5"
                         onClick={() => navigate('/investments')}
                     >
                         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                            <CardTitle className="text-sm font-medium">Investimentos</CardTitle>
-                            <TrendingUp className="h-4 w-4 text-muted-foreground" />
+                            <CardTitle className="text-sm font-medium text-muted-foreground">Investimentos</CardTitle>
+                            <TrendingUp className="h-4 w-4 text-emerald-500" />
                         </CardHeader>
                         <CardContent>
-                            <div className="text-xl md:text-2xl font-bold truncate">
+                            <div className="text-2xl font-bold truncate">
                                 <AnimatedNumber value={totalInvested} />
                             </div>
-                            <p className="text-xs text-muted-foreground">Valor atual de mercado</p>
                         </CardContent>
                     </Card>
                 </motion.div>
 
                 <motion.div variants={itemVariants}>
                     <Card
-                        className="h-full cursor-pointer hover:shadow-md transition-all active:scale-95 shadow-sm"
-                        onClick={() => navigate('/transactions')}
-                    >
-                        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                            <CardTitle className="text-sm font-medium">Saldo</CardTitle>
-                            <DollarSign className="h-4 w-4 text-muted-foreground" />
-                        </CardHeader>
-                        <CardContent>
-                            <div className="text-xl md:text-2xl font-bold truncate">
-                                <AnimatedNumber value={balance} />
-                            </div>
-                            <p className="text-xs text-muted-foreground">Dinheiro disponível</p>
-                        </CardContent>
-                    </Card>
-                </motion.div>
-
-                <motion.div variants={itemVariants}>
-                    <Card
-                        className="h-full cursor-pointer hover:shadow-md transition-all hover:border-emerald-200 active:scale-95 shadow-sm"
+                        className="h-full glass-card cursor-pointer hover:shadow-lg transition-all active:scale-95 border-white/5 hover:border-emerald-500/30"
                         onClick={() => navigate('/transactions?type=income')}
                     >
                         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                            <CardTitle className="text-sm font-medium">Receitas</CardTitle>
+                            <CardTitle className="text-sm font-medium text-muted-foreground">Receitas</CardTitle>
                             <ArrowUpCircle className="h-4 w-4 text-emerald-500" />
                         </CardHeader>
                         <CardContent>
-                            <div className="text-xl md:text-2xl font-bold text-emerald-500 truncate">
+                            <div className="text-xl font-bold text-emerald-500 truncate">
                                 <AnimatedNumber value={income} />
                             </div>
-                            <p className="text-xs text-muted-foreground">Entradas no período</p>
                         </CardContent>
                     </Card>
                 </motion.div>
 
                 <motion.div variants={itemVariants}>
                     <Card
-                        className="h-full cursor-pointer hover:shadow-md transition-all hover:border-rose-200 active:scale-95 shadow-sm"
+                        className="h-full glass-card cursor-pointer hover:shadow-lg transition-all active:scale-95 border-white/5 hover:border-rose-500/30"
                         onClick={() => navigate('/transactions?type=expense')}
                     >
                         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                            <CardTitle className="text-sm font-medium">Despesas</CardTitle>
+                            <CardTitle className="text-sm font-medium text-muted-foreground">Despesas</CardTitle>
                             <ArrowDownCircle className="h-4 w-4 text-rose-500" />
                         </CardHeader>
                         <CardContent>
-                            <div className="text-xl md:text-2xl font-bold text-rose-500 truncate">
+                            <div className="text-xl font-bold text-rose-500 truncate">
                                 <AnimatedNumber value={expense} />
                             </div>
-                            <p className="text-xs text-muted-foreground">Saídas no período</p>
                         </CardContent>
                     </Card>
                 </motion.div>
 
-                <motion.div variants={itemVariants}>
+                <motion.div variants={itemVariants} className="sm:col-span-2">
                     <Card
-                        className="h-full border-orange-200 bg-orange-50/10 cursor-pointer hover:shadow-md transition-all hover:border-orange-400 active:scale-95 shadow-sm"
+                        className="h-full glass-card cursor-pointer hover:shadow-lg transition-all active:scale-95 border-white/5 hover:border-orange-500/30"
                         onClick={() => navigate('/transactions?method=credit')}
                     >
                         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                            <CardTitle className="text-sm font-medium">Fatura</CardTitle>
+                            <CardTitle className="text-sm font-medium text-muted-foreground">Fatura Atual</CardTitle>
                             <CreditCard className="h-4 w-4 text-orange-500" />
                         </CardHeader>
                         <CardContent>
-                            <div className="text-xl md:text-2xl font-bold text-orange-600 truncate">
-                                <AnimatedNumber value={creditInvoice} />
+                            <div className="flex justify-between items-end">
+                                <div>
+                                    <div className="text-2xl font-bold text-orange-500 truncate">
+                                        <AnimatedNumber value={creditInvoice} />
+                                    </div>
+                                    <p className="text-xs text-muted-foreground mt-1">
+                                        {creditCycleLabel ? `Ciclo: ${creditCycleLabel}` : 'Gastos no crédito'}
+                                    </p>
+                                </div>
+                                <Button size="sm" variant="ghost" className="h-8 text-orange-500 hover:text-orange-400 hover:bg-orange-500/10">
+                                    Ver Fatura <ArrowRight className="ml-2 h-3 w-3" />
+                                </Button>
                             </div>
-                            <p className="text-xs text-muted-foreground">
-                                {creditCycleLabel ? `Ciclo: ${creditCycleLabel}` : 'Gastos no crédito'}
-                            </p>
                         </CardContent>
                     </Card>
                 </motion.div>
@@ -247,9 +268,23 @@ export function Dashboard() {
                                             ))}
                                         </Pie>
                                         <Tooltip
-                                            formatter={(value: any) =>
-                                                new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(Number(value) || 0)
-                                            }
+                                            content={({ active, payload }) => {
+                                                if (active && payload && payload.length) {
+                                                    const data = payload[0].payload
+                                                    return (
+                                                        <div className="glass-card p-2 px-3 rounded-lg border border-white/10 shadow-xl">
+                                                            <div className="flex items-center gap-2">
+                                                                <div className="h-2 w-2 rounded-full" style={{ backgroundColor: data.color }} />
+                                                                <span className="text-xs font-medium text-white">{data.name}</span>
+                                                            </div>
+                                                            <p className="text-sm font-bold text-white mt-1">
+                                                                {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(Number(data.value))}
+                                                            </p>
+                                                        </div>
+                                                    )
+                                                }
+                                                return null
+                                            }}
                                         />
                                         <Legend verticalAlign="bottom" height={36} />
                                     </PieChart>

@@ -99,7 +99,7 @@ export function ProfileDialog({ trigger, showLogout }: ProfileDialogProps) {
             <DialogTrigger asChild>
                 {trigger}
             </DialogTrigger>
-            <DialogContent className="sm:max-w-[425px]">
+            <DialogContent className="sm:max-w-[425px] glass border-white/10">
                 <DialogHeader>
                     <DialogTitle className="flex items-center gap-2">
                         <User className="h-5 w-5 text-primary" />

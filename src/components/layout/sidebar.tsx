@@ -16,7 +16,7 @@ export function Sidebar() {
     const location = useLocation()
 
     return (
-        <div className="flex h-screen w-64 flex-col border-r bg-card py-6">
+        <div className="flex h-screen w-64 flex-col border-r border-white/5 bg-card/60 backdrop-blur-md py-6">
             <div className="flex items-center gap-2 px-6">
                 <PieChart className="h-6 w-6 text-primary" />
                 <span className="text-xl font-bold">FinControl</span>

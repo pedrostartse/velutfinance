@@ -48,8 +48,8 @@ export function useDashboardData(period: Period = 'current_month') {
                         totalPatrimony: 17850.00,
                         recentTransactions: [],
                         categoryStats: [
-                            { name: 'Alimentação', value: 400, color: '#ef4444' },
-                            { name: 'Moradia', value: 1200, color: '#3b82f6' },
+                            { name: 'Alimentação', value: 400, color: '#f43f5e' },
+                            { name: 'Moradia', value: 1200, color: '#6366f1' },
                             { name: 'Lazer', value: 300, color: '#10b981' },
                             { name: 'Outros', value: 200, color: '#f59e0b' },
                         ]
@@ -210,14 +210,14 @@ export function useDashboardData(period: Period = 'current_month') {
 
 function generateColor(index: number) {
     const colors = [
-        '#ef4444', // Red
-        '#3b82f6', // Blue
-        '#10b981', // Emerald
-        '#f59e0b', // Amber
+        '#6366f1', // Indigo (Primary)
+        '#ec4899', // Pink (Secondary)
+        '#10b981', // Emerald (Success)
+        '#f59e0b', // Amber (Warning)
         '#8b5cf6', // Violet
-        '#ec4899', // Pink
         '#06b6d4', // Cyan
-        '#f97316'  // Orange
+        '#f43f5e', // Rose
+        '#3b82f6'  // Blue
     ]
     return colors[index % colors.length]
 }

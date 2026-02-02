@@ -4,6 +4,7 @@ import type { Database } from "@/types/supabase"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Progress } from "@/components/ui/progress"
 import { GoalDialog } from "@/components/goals/goal-dialog"
+import { UpdateGoalDialog } from "@/components/goals/update-goal-dialog"
 import { format } from "date-fns"
 import { ptBR } from "date-fns/locale"
 import { Target, Calendar as CalendarIcon, TrendingUp } from "lucide-react"
@@ -64,10 +65,13 @@ export function GoalsPage() {
                             <Card key={goal.id} className="transition-all hover:shadow-md">
                                 <CardHeader className="pb-2">
                                     <CardTitle className="flex items-center justify-between text-lg">
-                                        {goal.name}
-                                        <span className="text-xs font-normal px-2 py-1 rounded-full bg-secondary text-secondary-foreground">
-                                            {progress}%
-                                        </span>
+                                        <span className="truncate pr-2">{goal.name}</span>
+                                        <div className="flex items-center gap-2 shrink-0">
+                                            <span className="text-xs font-normal px-2 py-1 rounded-full bg-secondary text-secondary-foreground">
+                                                {progress}%
+                                            </span>
+                                            <UpdateGoalDialog goal={goal} onUpdate={fetchGoals} />
+                                        </div>
                                     </CardTitle>
                                 </CardHeader>
                                 <CardContent>

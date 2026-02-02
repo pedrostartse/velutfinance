@@ -19,7 +19,7 @@ export function Sidebar() {
         <div className="flex h-screen w-64 flex-col border-r border-white/5 bg-card/60 backdrop-blur-md py-6">
             <div className="flex items-center gap-2 px-6">
                 <PieChart className="h-6 w-6 text-primary" />
-                <span className="text-xl font-bold">FinControl</span>
+                <span className="text-xl font-bold bg-gradient-to-r from-emerald-400 to-emerald-600 bg-clip-text text-transparent">Velut Finance</span>
             </div>
 
             <div className="mt-10 flex-1 flex flex-col gap-2 px-3 overflow-y-auto">

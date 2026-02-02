@@ -25,6 +25,7 @@ export function ProfileDialog({ trigger, showLogout }: ProfileDialogProps) {
     const [copied, setCopied] = useState(false)
     const [closingDay, setClosingDay] = useState<string>("18")
     const [savingSettings, setSavingSettings] = useState(false)
+    const [saveSuccess, setSaveSuccess] = useState(false)
 
     useEffect(() => {
         async function loadProfile() {
@@ -68,7 +69,8 @@ export function ProfileDialog({ trigger, showLogout }: ProfileDialogProps) {
 
             if (error) throw error
 
-            // Optional: Show success feedback?
+            setSaveSuccess(true)
+            setTimeout(() => setSaveSuccess(false), 3000)
         } catch (error) {
             console.error('Error saving settings:', error)
             alert('Erro ao salvar configurações')
@@ -147,7 +149,7 @@ export function ProfileDialog({ trigger, showLogout }: ProfileDialogProps) {
 
                         <div className="grid gap-2">
                             <Label htmlFor="closingDay">Dia de Fechamento da Fatura</Label>
-                            <div className="flex gap-2">
+                            <div className="flex flex-col sm:flex-row gap-2">
                                 <div className="relative flex-1">
                                     <CalendarClock className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
                                     <Input
@@ -155,16 +157,29 @@ export function ProfileDialog({ trigger, showLogout }: ProfileDialogProps) {
                                         type="number"
                                         min={1}
                                         max={31}
-                                        className="pl-9"
+                                        className="pl-9 w-full"
                                         value={closingDay}
-                                        onChange={(e) => setClosingDay(e.target.value)}
+                                        onChange={(e) => {
+                                            setClosingDay(e.target.value)
+                                            setSaveSuccess(false)
+                                        }}
                                     />
                                 </div>
                                 <Button
                                     onClick={handleSaveSettings}
-                                    disabled={savingSettings}
+                                    disabled={savingSettings || saveSuccess}
+                                    className={`w-full sm:w-auto transition-all ${saveSuccess ? "bg-emerald-500 hover:bg-emerald-600 text-white" : ""}`}
                                 >
-                                    {savingSettings ? "Salvando..." : "Salvar"}
+                                    {savingSettings ? (
+                                        "Salvando..."
+                                    ) : saveSuccess ? (
+                                        <>
+                                            <Check className="h-4 w-4 mr-2" />
+                                            Salvo!
+                                        </>
+                                    ) : (
+                                        "Salvar"
+                                    )}
                                 </Button>
                             </div>
                             <p className="text-[11px] text-muted-foreground">

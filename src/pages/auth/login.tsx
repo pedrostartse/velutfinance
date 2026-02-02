@@ -29,7 +29,7 @@ export function LoginPage() {
                     password,
                 })
                 if (error) throw error
-                setMessage("Verifique seu email para confirmar o cadastro!")
+                setMessage("Verifique seu email (e a caixa de spam) para confirmar o cadastro!")
             } else {
                 const { error } = await supabase.auth.signInWithPassword({
                     email,

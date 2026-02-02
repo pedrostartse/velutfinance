@@ -102,8 +102,8 @@ export function ProfileDialog({ trigger, showLogout }: ProfileDialogProps) {
             <DialogTrigger asChild>
                 {trigger}
             </DialogTrigger>
-            <DialogContent className="sm:max-w-[425px] glass border-white/10">
-                <DialogHeader>
+            <DialogContent className="sm:max-w-[425px] w-[95vw] max-h-[90vh] glass border-white/10 flex flex-col p-6">
+                <DialogHeader className="shrink-0">
                     <DialogTitle className="flex items-center gap-2">
                         <User className="h-5 w-5 text-primary" />
                         Perfil do Usuário
@@ -113,7 +113,7 @@ export function ProfileDialog({ trigger, showLogout }: ProfileDialogProps) {
                     </DialogDescription>
                 </DialogHeader>
 
-                <div className="space-y-6 py-4">
+                <div className="space-y-6 py-4 overflow-y-auto pr-2 custom-scrollbar flex-1">
                     <div className="space-y-4">
                         <div className="flex items-start gap-3 p-3 rounded-lg border bg-muted/30">
                             <Mail className="h-5 w-5 text-muted-foreground mt-0.5" />

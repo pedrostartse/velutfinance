@@ -1,23 +1,25 @@
-# FinControl - Controle Financeiro Pessoal 💰
+# Velut Finance 💎
 
-FinControl é uma aplicação moderna e minimalista para gestão de finanças pessoais, focada em simplicidade e visualização de dados. 
+**Velut Finance** é uma aplicação moderna e minimalista para gestão de finanças pessoais, focada em simplicidade, visualização de dados premium e controle total sobre o seu patrimônio.
 
 ## 🚀 Funcionalidades
 
-- **Dashboard**: Visão geral de saldo, receitas e despesas com gráficos dinâmicos.
+- **Dashboard Premium**: Visão geral de saldo, receitas, despesas e fluxo de caixa com gráficos interativos e design glassmorphism.
 - **Investimentos**: Acompanhamento de patrimônio em tempo real com suporte a Ações, FIIs e Renda Fixa.
-- **Transações**: CRUD completo de movimentações financeiras com categorias inteligentes.
-- **Metas**: Definição e acompanhamento de objetivos de economia com barra de progresso.
-- **Assinaturas**: Gestão de pagamentos recorrentes e assinaturas mensais/anuais.
-- **Autenticação**: Sistema seguro de login e cadastro via Supabase.
+- **Transações Inteligentes**: CRUD completo de movimentações com categorias, filtros avançados e buscas rápidas.
+- **Controle de Fatura de Cartão**: Ciclo de fechamento de fatura personalizável para gestão precisa de gastos no crédito.
+- **Metas Financeiras**: Definição e acompanhamento de objetivos de economia com barra de progresso visual.
+- **Perfil Personalizado**: Gestão de informações pessoais e configurações de conta.
+- **Autenticação Segura**: Sistema robusto de login e cadastro via Supabase.
 
 ## 🛠️ Tecnologias Utilizadas
 
 - **Frontend**: [React](https://reactjs.org/) + [Vite](https://vitejs.dev/) + [TypeScript](https://www.typescriptlang.org/)
-- **Estilização**: [Tailwind CSS](https://tailwindcss.com/) + [Shadcn/UI](https://ui.shadcn.com/)
-- **Gráficos**: [Recharts](https://recharts.org/)
-- **Dados Financeiros**: [Brapi API](https://brapi.dev/) (Cotações em tempo real)
+- **Design & UI**: [Tailwind CSS](https://tailwindcss.com/) + [Shadcn/UI](https://ui.shadcn.com/) + [Framer Motion](https://www.framer.com/motion/)
+- **Visualização de Dados**: [Recharts](https://recharts.org/)
+- **Ícones**: [Lucide React](https://lucide.dev/)
 - **Backend/Auth**: [Supabase](https://supabase.com/)
+- **Dados Financeiros**: [Brapi API](https://brapi.dev/) (Integração para cotações)
 
 ## ⚙️ Configuração Local
 
@@ -44,9 +46,9 @@ FinControl é uma aplicação moderna e minimalista para gestão de finanças pe
     npm run dev
     ```
 
-## 🌐 Deploy (Vercel)
+## 🌐 Deploy
 
-Para realizar o deploy na Vercel, conecte seu repositório do GitHub e lembre-se de configurar as mesmas Variáveis de Ambiente (`VITE_SUPABASE_URL` e `VITE_SUPABASE_ANON_KEY`) no painel de configurações do projeto na Vercel.
+O projeto está otimizado para deploy na [Vercel](https://vercel.com/). Basta conectar seu repositório e configurar as variáveis de ambiente.
 
 ---
-Desenvolvido com ❤️ por Pedro.
+Desenvolvido com foco em **UX Premium** e **Performance**.

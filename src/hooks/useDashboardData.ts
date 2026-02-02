@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react'
 import { supabase } from '@/lib/supabase'
 import type { Database } from '@/types/supabase'
-import { startOfMonth, endOfMonth, subMonths, isWithinInterval } from 'date-fns'
+import { startOfMonth, endOfMonth, subMonths, isWithinInterval, format } from 'date-fns'
+import { ptBR } from 'date-fns/locale'
 
 type Transaction = Database['public']['Tables']['transactions']['Row']
 type Category = Database['public']['Tables']['categories']['Row']
@@ -19,6 +20,7 @@ export function useDashboardData(period: Period = 'current_month') {
         creditCycleLabel?: string
         recentTransactions: (Transaction & { categories: Category | null })[]
         categoryStats: { name: string; value: number; color: string }[]
+        monthlyStats: { name: string; income: number; expense: number }[]
     }>({
         balance: 0,
         income: 0,
@@ -28,7 +30,8 @@ export function useDashboardData(period: Period = 'current_month') {
         totalPatrimony: 0,
         creditCycleLabel: '',
         recentTransactions: [],
-        categoryStats: []
+        categoryStats: [],
+        monthlyStats: []
     })
     const [loading, setLoading] = useState(true)
 
@@ -52,7 +55,8 @@ export function useDashboardData(period: Period = 'current_month') {
                             { name: 'Moradia', value: 1200, color: '#6366f1' },
                             { name: 'Lazer', value: 300, color: '#10b981' },
                             { name: 'Outros', value: 200, color: '#f59e0b' },
-                        ]
+                        ],
+                        monthlyStats: []
                     })
                     setLoading(false)
                     return
@@ -183,6 +187,34 @@ export function useDashboardData(period: Period = 'current_month') {
                     color: generateColor(index)
                 }))
 
+                // Calculate Monthly Stats (Last 6 Months)
+                const monthlyStats = []
+                for (let i = 5; i >= 0; i--) {
+                    const d = subMonths(new Date(), i)
+                    const monthStart = startOfMonth(d)
+                    const monthEnd = endOfMonth(d)
+                    const monthName = format(d, 'MMM', { locale: ptBR })
+
+                    const monthTransactions = transactions.filter(t => {
+                        const tDate = new Date(t.date + 'T12:00:00')
+                        return isWithinInterval(tDate, { start: monthStart, end: monthEnd })
+                    })
+
+                    const mIncome = monthTransactions
+                        .filter(t => t.type === 'income')
+                        .reduce((acc, t) => acc + Number(t.amount), 0)
+
+                    const mExpense = monthTransactions
+                        .filter(t => t.type === 'expense')
+                        .reduce((acc, t) => acc + Number(t.amount), 0)
+
+                    monthlyStats.push({
+                        name: monthName.charAt(0).toUpperCase() + monthName.slice(1),
+                        income: mIncome,
+                        expense: mExpense
+                    })
+                }
+
                 setData({
                     balance: balance,
                     income,
@@ -192,7 +224,8 @@ export function useDashboardData(period: Period = 'current_month') {
                     totalPatrimony: balance + totalInvested,
                     creditCycleLabel,
                     recentTransactions: periodTransactions.slice(0, 5),
-                    categoryStats
+                    categoryStats,
+                    monthlyStats
                 })
 
             } catch (error) {
@@ -221,4 +254,3 @@ function generateColor(index: number) {
     ]
     return colors[index % colors.length]
 }
-

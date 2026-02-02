@@ -1,6 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { cn } from "@/lib/utils"
-import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip } from "recharts"
+import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip, BarChart, Bar, XAxis, YAxis, CartesianGrid } from "recharts"
 import { ArrowUpCircle, ArrowDownCircle, DollarSign, Briefcase, TrendingUp, CreditCard, Sparkles, Plus, ArrowRight } from "lucide-react"
 import { TransactionDialog } from "@/components/transactions/transaction-dialog"
 import { Button } from "@/components/ui/button"
@@ -41,7 +41,7 @@ export function Dashboard() {
         )
     }
 
-    const { balance, income, expense, creditInvoice, totalInvested, totalPatrimony, creditCycleLabel, recentTransactions, categoryStats } = dashboardData
+    const { balance, income, expense, creditInvoice, totalInvested, totalPatrimony, creditCycleLabel, recentTransactions, categoryStats, monthlyStats } = dashboardData
 
     const isNewUser = recentTransactions.length === 0 && balance === 0 && totalInvested === 0
 
@@ -245,7 +245,61 @@ export function Dashboard() {
                 transition={{ delay: 0.6 }}
                 className="grid gap-4 md:grid-cols-2 lg:grid-cols-7"
             >
-                <Card className="md:col-span-2 lg:col-span-4">
+                <Card className="md:col-span-2 lg:col-span-4 transition-all hover:shadow-md border-none bg-gradient-to-br from-white/5 to-white/0">
+                    <CardHeader>
+                        <CardTitle>Fluxo de Caixa (6 meses)</CardTitle>
+                    </CardHeader>
+                    <CardContent className="pl-2">
+                        <div className="h-[300px] w-full">
+                            <ResponsiveContainer width="100%" height="100%">
+                                <BarChart data={monthlyStats}>
+                                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(255,255,255,0.1)" />
+                                    <XAxis
+                                        dataKey="name"
+                                        stroke="#888888"
+                                        fontSize={12}
+                                        tickLine={false}
+                                        axisLine={false}
+                                    />
+                                    <YAxis
+                                        stroke="#888888"
+                                        fontSize={12}
+                                        tickLine={false}
+                                        axisLine={false}
+                                        tickFormatter={(value) => `R$${value}`}
+                                    />
+                                    <Tooltip
+                                        cursor={{ fill: 'rgba(255,255,255,0.05)' }}
+                                        content={({ active, payload, label }) => {
+                                            if (active && payload && payload.length) {
+                                                return (
+                                                    <div className="glass-card p-3 rounded-lg border border-white/10 shadow-xl">
+                                                        <p className="text-sm font-semibold text-white mb-2">{label}</p>
+                                                        {payload.map((p: any) => (
+                                                            <div key={p.name} className="flex items-center gap-2 text-xs mb-1">
+                                                                <div className="h-2 w-2 rounded-full" style={{ backgroundColor: p.fill }} />
+                                                                <span className="text-muted-foreground capitalize">{p.name === 'income' ? 'Receita' : 'Despesa'}:</span>
+                                                                <span className="font-medium text-white">
+                                                                    {new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(Number(p.value))}
+                                                                </span>
+                                                            </div>
+                                                        ))}
+                                                    </div>
+                                                )
+                                            }
+                                            return null
+                                        }}
+                                    />
+                                    <Legend />
+                                    <Bar dataKey="income" name="Receita" fill="#10b981" radius={[4, 4, 0, 0]} />
+                                    <Bar dataKey="expense" name="Despesa" fill="#f43f5e" radius={[4, 4, 0, 0]} />
+                                </BarChart>
+                            </ResponsiveContainer>
+                        </div>
+                    </CardContent>
+                </Card>
+
+                <Card className="md:col-span-2 lg:col-span-3 transition-all hover:shadow-md border-none bg-gradient-to-br from-white/5 to-white/0">
                     <CardHeader>
                         <CardTitle>Gastos por Categoria</CardTitle>
                     </CardHeader>

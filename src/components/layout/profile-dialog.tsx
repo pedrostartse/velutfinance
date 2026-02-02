@@ -24,6 +24,7 @@ export function ProfileDialog({ trigger, showLogout }: ProfileDialogProps) {
     const [user, setUser] = useState<{ email?: string; id: string } | null>(null)
     const [copied, setCopied] = useState(false)
     const [closingDay, setClosingDay] = useState<string>("18")
+    const [fullName, setFullName] = useState("")
     const [savingSettings, setSavingSettings] = useState(false)
     const [saveSuccess, setSaveSuccess] = useState(false)
 
@@ -36,12 +37,13 @@ export function ProfileDialog({ trigger, showLogout }: ProfileDialogProps) {
                 // Load settings
                 const { data: settings } = await supabase
                     .from('user_settings')
-                    .select('card_closing_day')
+                    .select('card_closing_day, full_name')
                     .eq('user_id', user.id)
                     .single()
 
                 if (settings) {
                     setClosingDay(settings.card_closing_day.toString())
+                    setFullName(settings.full_name || "")
                 }
             }
         }
@@ -64,6 +66,7 @@ export function ProfileDialog({ trigger, showLogout }: ProfileDialogProps) {
                 .upsert({
                     user_id: user.id,
                     card_closing_day: day,
+                    full_name: fullName,
                     updated_at: new Date().toISOString()
                 })
 
@@ -143,50 +146,69 @@ export function ProfileDialog({ trigger, showLogout }: ProfileDialogProps) {
 
                     <div className="space-y-4">
                         <div className="flex items-center gap-2 pb-2 border-b">
+                            <User className="h-4 w-4 text-primary" />
+                            <h3 className="text-sm font-semibold">Informações Pessoais</h3>
+                        </div>
+
+                        <div className="grid gap-2">
+                            <Label htmlFor="fullName">Nome Completo</Label>
+                            <Input
+                                id="fullName"
+                                placeholder="Seu nome"
+                                value={fullName}
+                                onChange={(e) => {
+                                    setFullName(e.target.value)
+                                    setSaveSuccess(false)
+                                }}
+                            />
+                        </div>
+                    </div>
+
+                    <div className="space-y-4">
+                        <div className="flex items-center gap-2 pb-2 border-b">
                             <CreditCard className="h-4 w-4 text-primary" />
                             <h3 className="text-sm font-semibold">Configurações do Cartão</h3>
                         </div>
 
                         <div className="grid gap-2">
                             <Label htmlFor="closingDay">Dia de Fechamento da Fatura</Label>
-                            <div className="flex flex-col sm:flex-row gap-2">
-                                <div className="relative flex-1">
-                                    <CalendarClock className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-                                    <Input
-                                        id="closingDay"
-                                        type="number"
-                                        min={1}
-                                        max={31}
-                                        className="pl-9 w-full"
-                                        value={closingDay}
-                                        onChange={(e) => {
-                                            setClosingDay(e.target.value)
-                                            setSaveSuccess(false)
-                                        }}
-                                    />
-                                </div>
-                                <Button
-                                    onClick={handleSaveSettings}
-                                    disabled={savingSettings || saveSuccess}
-                                    className={`w-full sm:w-auto transition-all ${saveSuccess ? "bg-emerald-500 hover:bg-emerald-600 text-white" : ""}`}
-                                >
-                                    {savingSettings ? (
-                                        "Salvando..."
-                                    ) : saveSuccess ? (
-                                        <>
-                                            <Check className="h-4 w-4 mr-2" />
-                                            Salvo!
-                                        </>
-                                    ) : (
-                                        "Salvar"
-                                    )}
-                                </Button>
+                            <div className="relative">
+                                <CalendarClock className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+                                <Input
+                                    id="closingDay"
+                                    type="number"
+                                    min={1}
+                                    max={31}
+                                    className="pl-9 w-full"
+                                    value={closingDay}
+                                    onChange={(e) => {
+                                        setClosingDay(e.target.value)
+                                        setSaveSuccess(false)
+                                    }}
+                                />
                             </div>
                             <p className="text-[11px] text-muted-foreground">
                                 O ciclo da fatura será calculado com base neste dia.
                             </p>
                         </div>
                     </div>
+
+                    <Button
+                        onClick={handleSaveSettings}
+                        disabled={savingSettings || saveSuccess}
+                        className={`w-full transition-all ${saveSuccess ? "bg-emerald-500 hover:bg-emerald-600 text-white" : ""}`}
+                    >
+                        {savingSettings ? (
+                            "Salvando..."
+                        ) : saveSuccess ? (
+                            <>
+                                <Check className="h-4 w-4 mr-2" />
+                                Salvo com sucesso!
+                            </>
+                        ) : (
+                            "Salvar Alterações"
+                        )}
+                    </Button>
 
                     <div className="text-[11px] text-muted-foreground bg-primary/5 p-3 rounded-lg border border-primary/10 italic">
                         Nota: Este ID é utilizado para identificar seus dados no banco de dados de forma segura através do Row Level Security (RLS).

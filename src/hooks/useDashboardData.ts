@@ -21,6 +21,7 @@ export function useDashboardData(period: Period = 'current_month') {
         recentTransactions: (Transaction & { categories: Category | null })[]
         categoryStats: { name: string; value: number; color: string }[]
         monthlyStats: { name: string; income: number; expense: number }[]
+        userName: string
     }>({
         balance: 0,
         income: 0,
@@ -31,7 +32,8 @@ export function useDashboardData(period: Period = 'current_month') {
         creditCycleLabel: '',
         recentTransactions: [],
         categoryStats: [],
-        monthlyStats: []
+        monthlyStats: [],
+        userName: ''
     })
     const [loading, setLoading] = useState(true)
 
@@ -56,7 +58,8 @@ export function useDashboardData(period: Period = 'current_month') {
                             { name: 'Lazer', value: 300, color: '#10b981' },
                             { name: 'Outros', value: 200, color: '#f59e0b' },
                         ],
-                        monthlyStats: []
+                        monthlyStats: [],
+                        userName: 'Visitante'
                     })
                     setLoading(false)
                     return
@@ -73,7 +76,7 @@ export function useDashboardData(period: Period = 'current_month') {
                         .select('*'),
                     supabase
                         .from('user_settings')
-                        .select('card_closing_day')
+                        .select('card_closing_day, full_name')
                         .eq('user_id', session.user.id)
                         .single()
                 ])
@@ -84,6 +87,13 @@ export function useDashboardData(period: Period = 'current_month') {
                 const transactions = transactionsRes.data || []
                 const investments = investmentsRes.data || []
                 const closingDay = settingsRes.data?.card_closing_day || 18
+
+                // Prioritize name from settings, then metadata
+                // If no name is found, return empty string to trigger generic welcome
+                const userName = settingsRes.data?.full_name ||
+                    session.user.user_metadata?.full_name ||
+                    session.user.user_metadata?.name ||
+                    ''
 
                 // Calculate Investment Values
                 const totalInvested = investments.reduce((acc, inv) => {
@@ -216,7 +226,7 @@ export function useDashboardData(period: Period = 'current_month') {
                 }
 
                 setData({
-                    balance: balance,
+                    balance,
                     income,
                     expense,
                     creditInvoice,
@@ -225,7 +235,8 @@ export function useDashboardData(period: Period = 'current_month') {
                     creditCycleLabel,
                     recentTransactions: periodTransactions.slice(0, 5),
                     categoryStats,
-                    monthlyStats
+                    monthlyStats,
+                    userName
                 })
 
             } catch (error) {

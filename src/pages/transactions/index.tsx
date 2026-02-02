@@ -145,7 +145,7 @@ export function TransactionsPage() {
                                 <Button
                                     variant={(typeFilter === 'all' && methodFilter === 'all') ? "secondary" : "ghost"}
                                     size="sm"
-                                    className="h-9 px-4 font-bold rounded-lg border border-dashed border-primary/20"
+                                    className="h-10 px-4 font-bold rounded-lg border border-dashed border-primary/20"
                                     onClick={() => {
                                         setTypeFilter('all')
                                         setMethodFilter('all')
@@ -157,8 +157,7 @@ export function TransactionsPage() {
                                 <div className="h-8 w-px bg-border/50 hidden sm:block" />
 
                                 {/* Tipo Filter */}
-                                <div className="space-y-1.5 flex-1 min-w-[140px] sm:flex-none">
-                                    <span className="text-[10px] uppercase font-bold text-muted-foreground/60 ml-1">Tipo</span>
+                                <div className="flex-1 min-w-[140px] sm:flex-none">
                                     <div className="flex bg-muted/60 rounded-lg p-1">
                                         <Button
                                             variant={typeFilter === 'income' ? "secondary" : "ghost"}
@@ -180,8 +179,7 @@ export function TransactionsPage() {
                                 </div>
 
                                 {/* Pagamento Filter */}
-                                <div className="space-y-1.5 flex-1 min-w-[140px] sm:flex-none">
-                                    <span className="text-[10px] uppercase font-bold text-muted-foreground/60 ml-1">Pagamento</span>
+                                <div className="flex-1 min-w-[140px] sm:flex-none">
                                     <div className="flex bg-muted/60 rounded-lg p-1">
                                         <Button
                                             variant={methodFilter === 'debit' ? "secondary" : "ghost"}

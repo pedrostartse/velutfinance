@@ -41,7 +41,7 @@ export function Dashboard() {
         )
     }
 
-    const { balance, income, expense, creditInvoice, totalInvested, totalPatrimony, creditCycleLabel, recentTransactions, categoryStats, monthlyStats } = dashboardData
+    const { balance, income, expense, creditInvoice, totalInvested, totalPatrimony, creditCycleLabel, recentTransactions, categoryStats, monthlyStats, userName } = dashboardData
 
     const isNewUser = recentTransactions.length === 0 && balance === 0 && totalInvested === 0
 
@@ -53,8 +53,10 @@ export function Dashboard() {
                 className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between"
             >
                 <div>
-                    <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
-                    <p className="text-sm text-muted-foreground">Bem-vindo ao seu controle financeiro.</p>
+                    <h1 className="text-3xl font-bold tracking-tight">
+                        {userName ? `Olá, ${userName.split(' ')[0]}! 👋` : 'Bem-vindo! 👋'}
+                    </h1>
+                    <p className="text-sm text-muted-foreground">Aqui está o resumo das suas finanças hoje.</p>
                 </div>
                 <div className="flex items-center gap-3">
                     <PeriodFilter value={period} onChange={setPeriod} />
@@ -73,7 +75,12 @@ export function Dashboard() {
                             <Sparkles className="h-8 w-8" />
                         </div>
                         <div className="flex-1 text-center md:text-left space-y-2">
-                            <h2 className="text-xl md:text-2xl font-bold">Olá! Vamos começar sua jornada financeira?</h2>
+                            <h2 className="text-xl md:text-2xl font-bold">
+                                {userName
+                                    ? `Vamos começar sua jornada financeira, ${userName.split(' ')[0]}?`
+                                    : 'Vamos começar sua jornada financeira?'
+                                }
+                            </h2>
                             <p className="text-muted-foreground text-sm max-w-2xl">
                                 Parece que você ainda não registrou nada. Que tal começar adicionando sua primeira transação ou cadastrando seus investimentos para ter uma visão clara do seu patrimônio?
                             </p>
